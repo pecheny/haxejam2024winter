@@ -5,7 +5,9 @@ import update.Updatable;
 class Scheduler implements Updatable {
     var time:Time;
 
-    public function new() {}
+    public function new(time) {
+        this.time = time;
+    }
 
     var tickers:Array<TickUnit> = [];
 

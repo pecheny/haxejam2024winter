@@ -9,9 +9,11 @@ class FishyState {
     // public var buildings:Array<Building>;
     public var slots(default, null):ReadOnlyArray<Slot>;
     public var stats(default, null):AllStats = new AllStats({});
+    public var time:Time = new Time();
 
     public function new() {
         slots = [for (i in 0...9) new Slot()];
+        stats.initAll({shell:{value:0, max:100}});
     }
 }
 
@@ -41,7 +43,7 @@ class AllStats implements StatsSet {
     public var bivalvia(default, null):GameStat<Int>; // двустворчатые
     public var buck(default, null):GameStat<Int>;
 
-    public function initAll(data:{?hlt:Int}) {
+    public function initAll(data:{}) {
         for (k in keys) {
             var stat = get(k);
             if (Reflect.hasField(data, k)) {

@@ -10,8 +10,7 @@ import stset.Stats;
 
 class BuisinessGame extends GameRunBase {
     var state = new FishyState();
-    var stats:AllStats;
-    var scheduler = new Scheduler();
+    var scheduler:Scheduler;
     var gui:GameView;
 
     public function new(e, ph) {
@@ -21,6 +20,7 @@ class BuisinessGame extends GameRunBase {
 
     function productionAction(r:Receipe, count:Int) {
         var available = 9999;
+        var stats = state.stats;
         for (s in r.src) {
             var sa = Math.floor(stats.get(s.resId).value / s.count);
             if (sa < available)
@@ -35,13 +35,20 @@ class BuisinessGame extends GameRunBase {
 
     override function init() {
         super.init();
+        scheduler = new Scheduler(state.time);
         gui = new GameView(getView());
         entity.addComponent(state);
+        entity.addComponent(state.time);
         entity.addComponent(scheduler);
         gui.watch(entity);
         gui.entity.addComponent(state);
         gui.entity.addComponentByType(StatsSet, state.stats);
         addBuilding(0);
+    }
+
+    override function update(dt:Float) {
+        state.time.t += dt;
+        scheduler.update(dt);
     }
 
     function addBuilding(i:Int) {
