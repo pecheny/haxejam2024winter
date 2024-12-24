@@ -40,6 +40,7 @@ class BuisinessGame extends GameRunBase {
         entity.addComponent(scheduler);
         gui.watch(entity);
         gui.entity.addComponent(state);
+        gui.entity.addComponentByType(StatsSet, state.stats);
         addBuilding(0);
     }
 

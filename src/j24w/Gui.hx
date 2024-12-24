@@ -9,7 +9,9 @@ import fancy.domkit.Dkit.BaseDkit;
 
 class GameView extends BaseDkit {
     static var SRC = <game-view vl={PortionLayout.instance}>
-        <label(b().v(pfr, 1).b()) id="lbl"  style={"small-text"} text={"Hi1"} />
+        <base(b().v(pfr, 1).b())>
+            ${new fancy.widgets.StatsDisplay(__this__.ph); }
+        </base>
         <slots-panel(b().v(pfr, 6).b()) id="slots" vl={PortionLayout.instance}   />
     </game-view>
 }
