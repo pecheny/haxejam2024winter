@@ -1,6 +1,10 @@
 package;
 
-
+import j24w.Popup;
+import a2d.Placeholder2D;
+import fu.ui.Button;
+import fu.GuiDrawcalls;
+import al.ec.WidgetSwitcher;
 import j24w.BuisinessGame;
 import j24w.Gui;
 import openfl.ui.Keyboard;
@@ -24,21 +28,29 @@ class Main extends BootstrapMain {
         kbinder.addCommand(Keyboard.P, () -> {
             pause.pause(!pause.paused);
         });
-        
-        ec.DebugInit.initCheck.listen(()->trace("bar"));
+
+        ec.DebugInit.initCheck.listen(() -> trace("bar"));
         kbinder.addCommand(Keyboard.A, () -> {
             ec.DebugInit.initCheck.dispatch();
         });
 
-        var run = new BuisinessGame (new Entity("dungeon-run"), Builder.widget());
+        var run = new BuisinessGame(new Entity("dungeon-run"), Builder.widget());
         // run.state.load(Json.parse(Assets.getText("state.json")));
-        // var run = new ButtonTester(new Entity("dungeon-run"), Builder.widget());
-
+        
         new CtxWatcher(GameRunBinder, run.entity);
-        // run.entity.addComponentByType(GameRun,new GameReadyChecker2(run));
         rootEntity.addChild(run.entity);
         run.entity.addComponentByType(GameRun, run);
-
+        
+        createPopup();
     }
-    
+
+    function createPopup() {
+        var ph = Builder.sibling(rootEntity.getComponent(Placeholder2D));
+        ph.entity.name = "popup";
+        fui.makeClickInput(ph);
+        var popup = ph.entity;
+        fui.createContainer(popup, Xml.parse(GuiDrawcalls.DRAWCALLS_LAYOUT).firstElement());
+        var switcher = new WidgetSwitcher(ph);
+        rootEntity.addComponent(new Popup(switcher, fui));
+    }
 }
