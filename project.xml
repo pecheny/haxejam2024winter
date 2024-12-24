@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+    <meta title="Underwater Startup" package="shoo.j2024w" version="1.0.0" company="shoo"/>
+    <app main="Main" />
+
+    <window antialiasing="4"/>
+    <window background="#303030" fps="60" />
+    <window background="#303030" fps="60" width="1280" height="760" unless="html5"/>
+    <source path="src"/>
+
+    <haxeflag name="--macro" value='domkit.Macros.registerComponentsPath("j24w.Gui.$")'/>
+    <haxelib name="openfl"/>
+    <haxelib name="jiga"/>
+</project>
