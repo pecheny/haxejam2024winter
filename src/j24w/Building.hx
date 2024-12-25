@@ -10,6 +10,7 @@ class Building extends Component {
     @:once var scheduler:Scheduler;
     @:once var time:Time;
     @:once var stats:AllStats;
+    @:once var defs:BuildingsDef;
 
     public var name:String;
 
@@ -19,8 +20,9 @@ class Building extends Component {
             regTicker(t);
     }
 
-    public function addAction(a:Action) {
+    function addAction(a:Action, acTime) {
         var tk = new TickUnit();
+        tk.activationTime = acTime;
         tk.onActivate.listen(productionAction.bind(a.receipe, a.count));
         tk.cd = a.cooldown;
         addTicker(tk);
@@ -35,7 +37,6 @@ class Building extends Component {
     }
 
     function regTicker(t:TickUnit) {
-        t.activationTime = time.getTime() + t.cd;
         scheduler.addTicker(t);
     }
 
@@ -57,4 +58,50 @@ class Building extends Component {
     }
 
     public function demolish() {}
+
+    function unsubscribe() {
+        for (tk in tickers) {
+            scheduler.removeTicker(tk);
+            tk.onActivate.asArray().resize(0);
+        }
+        tickers.resize(0);
+    }
+
+    var defId:String;
+    var level:Int;
+
+    public function serialize():BuildingState {
+        return {
+            defId: defId,
+            level: level,
+            timings: [for (tk in tickers) tk.activationTime]
+        }
+    }
+
+    public function loadState(state:BuildingState) {
+        initBuilding(state.defId, state.level, state.timings);
+        return this;
+    }
+
+    public function initBuilding(defId, level, ?timings:Array<Float>) {
+        this.defId = defId;
+        this.level = level;
+        var def = defs.getLvl(defId, level);
+        name = defId + " " + level;
+        if (timings == null)
+            for (a in def.actions)
+                addAction(a, time.getTime() + a.cooldown);
+        else
+            for (i in 0...def.actions.length) {
+                var a = def.actions[i];
+                var timing = if (timings.length > i) timings[i] else time.getTime() + a.cooldown;
+                addAction(a, timing);
+            }
+    }
+}
+
+typedef BuildingState = {
+    defId:String,
+    level:Int,
+    timings:Array<Float>
 }

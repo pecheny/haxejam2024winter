@@ -25,6 +25,10 @@ class Scheduler implements Updatable {
     public function addTicker(t) {
         tickers.push(t);
     }
+    
+    public function removeTicker(t) {
+        tickers.push(t);
+    }
 }
 
 class TickUnit {

@@ -9,12 +9,9 @@ class BuyingBilding extends Component {
     @:once var state:FishyState;
 
     public function buy(slotId:Int, defId) {
-        var def = defs.getLvl(defId, 0);
-        var b = new Building(new Entity(defId + "-" + slotId));
-        for (a in def.actions)
-            b.addAction(a);
-        b.name = defId;
-        entity.addChild(b.entity);
-        state.slots[slotId].value = Building(b);
+        var slot = state.slots[slotId];
+        var b = slot.building;
+        b.initBuilding(defId, 0);
+        slot.value = Building(b);
     }
 }

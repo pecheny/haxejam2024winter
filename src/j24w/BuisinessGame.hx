@@ -1,5 +1,6 @@
 package j24w;
 
+import haxe.Json;
 import al.Builder;
 import j24w.Gui;
 import bootstrap.DefNode;
@@ -40,24 +41,15 @@ class BuisinessGame extends GameRunBase {
         var bd = gui.entity.addAliasByName(Entity.getComponentId(BuildingDetails), new BuildingDetails(Builder.widget()));
         bd.watch(entity);
 
-        // gui.entity.addComponent(state);
+        for (sl in state.slots)
+            entity.addChild(sl.building.entity);
+
         gui.entity.addComponentByType(StatsSet, state.stats);
-        buying.buy(0, "farm");
+        state.load(Json.parse(openfl.utils.Assets.getText("state.json")));
     }
 
     override function update(dt:Float) {
         state.time.t += dt;
         scheduler.update(dt);
     }
-
-
-    // function createShellFarm() {
-    //     // var r =
-    //     var shellsTick = new TickUnit();
-    //     shellsTick.onActivate = productionAction.bind(r, 2);
-    //     var b = new Building(new Entity("shell-farm"));
-    //     b.name = "farm";
-    //     b.addTicker(shellsTick);
-    //     return b;
-    // }
 }

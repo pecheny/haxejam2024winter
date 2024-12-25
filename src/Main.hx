@@ -1,5 +1,7 @@
 package;
 
+import j24w.FishyState;
+import sys.io.File;
 import j24w.Popup;
 import a2d.Placeholder2D;
 import fu.ui.Button;
@@ -29,14 +31,18 @@ class Main extends BootstrapMain {
             pause.pause(!pause.paused);
         });
 
-        ec.DebugInit.initCheck.listen(() -> trace("bar"));
         kbinder.addCommand(Keyboard.A, () -> {
             ec.DebugInit.initCheck.dispatch();
         });
+        
+
 
         var run = new BuisinessGame(new Entity("dungeon-run"), Builder.widget());
         // run.state.load(Json.parse(Assets.getText("state.json")));
         
+        kbinder.addCommand(Keyboard.S, () -> {
+            File.saveContent("state.json", Json.stringify(run.entity.getComponent(FishyState).serialize(), null, " "));
+        });
         new CtxWatcher(GameRunBinder, run.entity);
         rootEntity.addChild(run.entity);
         run.entity.addComponentByType(GameRun, run);
