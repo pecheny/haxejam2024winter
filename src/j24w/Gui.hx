@@ -1,5 +1,8 @@
 package j24w;
 
+import fu.Signal;
+import al.core.DataView;
+import j24w.FishyData;
 import ec.Entity;
 import gl.sets.ColorSet;
 import graphics.ShapesColorAssigner;
@@ -26,8 +29,6 @@ class GameView extends BaseDkit {
         super.init();
         ph.entity.name = "gui";
         fui.makeClickInput(ph);
-        entity.addAliasByName(Entity.getComponentId(BuyBuilding), new BuyBuilding(b().v(sfr, 0.9).v(sfr, 0.9).b()));
-        entity.addAliasByName(Entity.getComponentId(BuildingDetails), new BuildingDetails(b().v(sfr, 0.9).h(sfr, 0.9).b()));
     }
 }
 
@@ -84,12 +85,58 @@ class BuildingDetails extends BaseDkit {
     </building-details>
 }
 
+class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
+    static var SRC = <building-card >
+
+        ${fui.quad(__this__.ph, 0xBC007DC0)}
+        <label(b().v(pfr, 6).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
+ </building-card>
+
+    public function initData(descr:BuildingDef) {
+        lbl.text = descr.name;
+    }
+}
+
 class BuyBuilding extends BaseDkit {
     @:once var popup:Popup;
+    @:once var defs:BuildingsDef;
+    @:once var buying:BuyingBilding;
+    public var slot:Int;
+    var input:a2d.ChildrenPool.DataChildrenPool<BuildingDef, BuildingCard>;
+
+    public var onChoice(default, null) = new IntSignal();
+
     static var SRC = <buy-building vl={PortionLayout.instance}>
     ${fui.quad(__this__.ph, 0xBC0B0A0A)}
     <popup-title(b().v(sfr, .05).b()) />
+    <base(b().v(pfr, 1).b()) id="cardsContainer"  vl={PortionLayout.instance} />
+
     </buy-building>
+
+    var defIds:Array<String> = [];
+
+    override function init() {
+        super.init();
+        onChoice.listen(buy);
+        input = new fu.ui.InteractivePanelBuilder().withContainer(cardsContainer.c)
+            .withWidget(() -> new BuildingCard(b().h(sfr, 0.3).v(sfr, 0.3).b()))
+            .withSignal(onChoice)
+            .build();
+        var defs = defs.getDyn("");
+        var dd = [];
+        for (f in Reflect.fields(defs)) {
+            var d = Reflect.field(defs, f);
+            d.name = f;
+            dd.push(d);
+            defIds.push(f);
+        }
+        input.initData(dd);
+    }
+
+    function buy(i) {
+        buying.buy(slot, defIds[i]);
+        popup.close();
+    }
 }
 
 class BuildingView extends BaseDkit {
@@ -148,6 +195,7 @@ class SlotView extends Widget {
     }
 
     function onEmptyClick() {
+        buy.slot = slotId;
         popup.switchTo(buy.ph);
     }
 
@@ -157,6 +205,7 @@ class SlotView extends Widget {
     }
 
     function onSlotChanged() {
+        trace("slot changed");
         switch slot.value {
             case Building(b):
                 bv.initData(b);

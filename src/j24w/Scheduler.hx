@@ -1,5 +1,6 @@
 package j24w;
 
+import fu.Signal;
 import update.Updatable;
 
 class Scheduler implements Updatable {
@@ -16,7 +17,7 @@ class Scheduler implements Updatable {
         for (t in tickers) {
             while (t.activationTime < tt) {
                 t.activationTime += t.cd;
-                t.onActivate();
+                t.onActivate.dispatch();
             }
         }
     }
@@ -29,7 +30,7 @@ class Scheduler implements Updatable {
 class TickUnit {
     public var cd = 1.;
     public var activationTime:Float;
-    public var onActivate:Void->Void;
+    public var onActivate:Signal<Void->Void> = new Signal();
 
     public function new() {}
 }

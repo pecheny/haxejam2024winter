@@ -1,0 +1,34 @@
+{
+    "farm":{
+        "actions":[
+            { "receipe":{ "out": "shell", "src": [] }, "count":2, "cooldown":5 }
+        ],
+        "levels":[
+         {
+            "actions":[
+                { "receipe":{ "out": "shell", "src": [] }, "count":2, "cooldown":5 }
+            ]
+         },
+         {
+            "actions":[
+                { "receipe":{ "out": "shell", "src": [] }, "count":3, "cooldown":5 }
+            ]
+         },
+         {
+            "actions":[
+                { "receipe":{ "out": "shell", "src": [] }, "count":4, "cooldown":5 }
+            ]
+         }
+
+        ]
+    },
+    "kiosk":{
+        "actions":[
+            { "receipe":{ "out": "buck", "src": [{"resId":"shell", "count":10}] }, "count":2, "cooldown":10 }
+        ],
+        "levels":[
+
+        ]
+    }
+
+}

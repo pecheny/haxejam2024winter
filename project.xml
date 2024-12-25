@@ -11,4 +11,5 @@
     <haxeflag name="--macro" value='domkit.Macros.registerComponentsPath("j24w.Gui.$")'/>
     <haxelib name="openfl"/>
     <haxelib name="jiga"/>
+    <assets path="Assets" include="*" rename=""/>
 </project>
