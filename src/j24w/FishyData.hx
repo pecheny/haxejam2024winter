@@ -8,19 +8,14 @@ import bootstrap.DefNode.Leveled;
 class BuildingsDef extends DefLvlNode<BuildingDef> { }
 typedef BuildingDef = {
     >Leveled,
-    actions:Array<Action>,
+    actions:Array<Receipe>,
     name:String
 }
 
-typedef Action = {
-    cooldown:Float,
-    receipe:Receipe,
-    count:Int
-}
-
 typedef Receipe = {
-    out:ResId,
-    src:Array<ResPile>
+    out:ResPile,
+    src:Array<ResPile>,
+    cooldown:Float,
 }
 
 typedef ResPile = {
