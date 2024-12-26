@@ -51,6 +51,15 @@ class Main extends BootstrapMain {
         createPopup();
     }
 
+    override function iniUpdater() {
+        var updater = new bootstrap.RunUpdater();
+        // fui already uses updater with fps limit
+        // which may be crusial on html targets
+        fui.updater.addUpdatable(updater);
+        rootEntity.addComponentByType(ginp.api.GameInputUpdaterBinder, updater);
+        rootEntity.addComponent(new update.UpdateBinder(updater));
+    }
+
     function createPopup() {
         var ph = Builder.sibling(rootEntity.getComponent(Placeholder2D));
         ph.entity.name = "popup";
