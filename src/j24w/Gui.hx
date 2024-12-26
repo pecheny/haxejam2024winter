@@ -101,9 +101,12 @@ class ProdChainView extends BaseDkit implements DataView<ProductionChain> {
     static var SRC = <prod-chain-view vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0xFF00961B)}
             <label(b().v(sfr, 0.03).b()) id="lbl"  style={"fit"} text={"Hi1"} />
-            <base(b().l().v(pfr, 1).b()) >
-                ${fui.quad(__this__.ph, 0x397A0096)}
-                ${progress = new ProgressBarWidget(__this__.ph, 0xff8585)}
+            <base(b().l().v(sfr, 0.015).b()) hl={PortionLayout.instance}>
+                <label(b().h(pfr,0.3).v(sfr, 0.03).b()) id="cd"  style={"fit"} text={"Hi1"} />
+                <base(b().l().v(sfr, 0.015).b()) >
+                    ${fui.quad(__this__.ph, 0x397A0096)}
+                    ${progress = new ProgressBarWidget(__this__.ph, 0xff8585)}
+                </base>
             </base>
  </prod-chain-view>
 
@@ -119,6 +122,7 @@ class ProdChainView extends BaseDkit implements DataView<ProductionChain> {
         ].join(' + ');
         var sp = chain.receipe.out;
         lbl.text = '$srcLbl > ${sp.resId} x ${sp.count}';
+        cd.text = "cd: " + chain.receipe.cooldown;
     }
 }
 
@@ -132,12 +136,10 @@ class BuildingView extends BaseDkit implements Updatable {
             <label(b().v(pfr, 0.3).b()) id="name"  style={"fit"} text={"Hi1"} />
             <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="lvl"  style={"fit"} text={"Hi1"} />
         </base>
-        <base(b().l().v(pfr, 1).b()) id="chainsContainer" vl={PortionLayout.instance}>
-        ${fui.quad(__this__.ph, 0x16C0FFCB)}
-
+        <base(b().l().v(pfr, 1).b()) />
+        <base(b().l().v(pfr, 0.5).b()) id="chainsContainer" vl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0x16C0FFCB)}
         </base>
-
-        <label(b().v(pfr, 0.5).b())  style={"small-text"} text={"Hi1"} />
     </building-view>
 
     public function update(dt) {
@@ -148,7 +150,7 @@ class BuildingView extends BaseDkit implements Updatable {
 
     override function init() {
         super.init();
-        input = new fu.ui.InteractivePanelBuilder().withContainer(chainsContainer.c).withWidget(() -> new ProdChainView(b().h(pfr, 1).b())).build();
+        input = new fu.ui.InteractivePanelBuilder().withInput((_,_)->{}).withContainer(chainsContainer.c).withWidget(() -> new ProdChainView(b().v(sfr, 0.02).b())).build();
         if (building != null)
             input.initData(building.chains);
         entity.addComponentByType(Updatable, this);
