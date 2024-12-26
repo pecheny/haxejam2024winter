@@ -2,7 +2,10 @@
     "farm":{
         "actions":[ { "out": {"resId":"shell", "count":2}, "src": [],   "cooldown":5 } ],
         "levels":[
-            {        "actions":[ { "out": {"resId":"shell", "count":3}, "src": [],   "cooldown":5 } ] }
+            {},
+            {        "actions":[ { "out": {"resId":"shell", "count":3}, "src": [],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":4}, "src": [],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":4}, "src": [],   "cooldown":2 } ] }
         ]
     },
     "kiosk":{

@@ -6,21 +6,22 @@ import j24w.FishyState;
 import update.Updatable;
 
 class Building extends Component implements Updatable {
-    public var name:String;
+    public var defId(default, null):String;
+    public var level(default, null):Int;
     public final chains:Array<ProductionChain> = [];
 
     @:once var time:Time;
     @:once var stats:AllStats;
     @:once var defs:BuildingsDef;
-    var defId:String;
-    var level:Int;
 
     public function update(dt) {
         for (ch in chains)
             ch.update();
     }
 
-    public function demolish() {}
+    public function demolish() {
+        chains.resize(0);
+    }
 
     public function serialize():BuildingState {
         return {
@@ -40,7 +41,7 @@ class Building extends Component implements Updatable {
         this.defId = defId;
         this.level = level;
         var def = defs.getLvl(defId, level);
-        name = defId + " " + level;
+        trace(def.actions);
         if (timings == null)
             for (a in def.actions)
                 addAction(a, time.getTime() + a.cooldown);

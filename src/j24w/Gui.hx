@@ -1,5 +1,6 @@
 package j24w;
 
+import a2d.Placeholder2D;
 import update.UpdateBinder;
 import ec.CtxWatcher;
 import a2d.Widget;
@@ -113,8 +114,9 @@ class ProdChainView extends BaseDkit implements DataView<ProductionChain> {
     public function initData(descr:ProductionChain) {
         chain = descr;
         var srcLbl = [
-        for (sp in chain.receipe.src)
-             '${sp.resId} x ${sp.count}'].join(' + ');
+            for (sp in chain.receipe.src)
+                '${sp.resId} x ${sp.count}'
+        ].join(' + ');
         var sp = chain.receipe.out;
         lbl.text = '$srcLbl > ${sp.resId} x ${sp.count}';
     }
@@ -126,7 +128,10 @@ class BuildingView extends BaseDkit implements Updatable {
 
     static var SRC = <building-view vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xff960000)}
-        <label(b().v(pfr, 0.5).b()) id="lbl"  style={"small-text"} text={"Hi1"} />
+        <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
+            <label(b().v(pfr, 0.3).b()) id="name"  style={"fit"} text={"Hi1"} />
+            <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="lvl"  style={"fit"} text={"Hi1"} />
+        </base>
         <base(b().l().v(pfr, 1).b()) id="chainsContainer" vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0x16C0FFCB)}
 
@@ -143,9 +148,7 @@ class BuildingView extends BaseDkit implements Updatable {
 
     override function init() {
         super.init();
-        input = new fu.ui.InteractivePanelBuilder().withContainer(chainsContainer.c)
-            .withWidget(() -> new ProdChainView(b().h(pfr, 1).b()))
-            .build();
+        input = new fu.ui.InteractivePanelBuilder().withContainer(chainsContainer.c).withWidget(() -> new ProdChainView(b().h(pfr, 1).b())).build();
         if (building != null)
             input.initData(building.chains);
         entity.addComponentByType(Updatable, this);
@@ -154,7 +157,8 @@ class BuildingView extends BaseDkit implements Updatable {
 
     public function initData(building:Building) {
         this.building = building;
-        lbl.text = building.name;
+        name.text = building.defId;
+        lvl.text = ""+ building.level + " lvl";
         if (!_inited)
             return;
         input.initData(building.chains);
@@ -211,7 +215,7 @@ class SlotView extends Widget {
     }
 
     function onBuildingClick() {
-        details.lbl.text = building.name;
+        details.initForSlot(slotId);
         popup.switchTo(details.ph);
     }
 
@@ -235,18 +239,44 @@ class PopupTitle extends BaseDkit {
 
     static var SRC = <popup-title hl={PortionLayout.center}>
         ${fui.quad(__this__.ph, 0xFF0087AC)}
-        <label(b().h(pfr, 6).b()) id="lbl"  style={"small-text"} text={"window title"} />
+        <label(b().h(pfr, 6).b()) public id="lbl"  style={"small-text"} text={"window title"} />
         <button(b().h(sfr, 0.05).b())  style={"center"} onClick={()->popup.close()} text={"X"} />
     </popup-title>
 }
 
 class BuildingDetails extends BaseDkit {
+    var slot:Int;
+    var building:Building;
+    @:once var buying:BuyingBilding;
+    @:once var state:FishyState;
+    @:once var popup:Popup;
+
     static var SRC = <building-details vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC0B0A0A)}
-        <popup-title(b().v(sfr, .05).b()) />
-        <label(b().v(pfr, 6).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
+        <popup-title(b().v(sfr, .05).b()) id="titlebar" />
+        <label(b().v(pfr, 1).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
+        <button(b().h(sfr, 0.25).b())  style={"center"} onClick={demolish} text={"demolish"} />
+        <button(b().h(sfr, 0.25).b())  style={"center"} onClick={()->buying.upgrade(slot)} text={"upgrade"} />
         <label(b().v(pfr, 6).b()) style={"small-text"} text={"upgrades"} />
     </building-details>
+
+    override function init() {
+        super.init();
+        initForSlot(slot);
+    }
+
+    function demolish() {
+        buying.demolish(slot);
+        popup.close();
+    }
+
+    public function initForSlot(i) {
+        slot = i;
+        if (!_inited)
+            return;
+        building = state.slots[i].building;
+        titlebar.lbl.text = building.defId + " details";
+    }
 }
 
 @:uiComp("slots-panel")
