@@ -66,9 +66,9 @@ enum abstract ChainState(Int) {
 
 class ProductionChain {
     public var state(get, null):ChainState;
+    public var receipe(default, null):Receipe;
     public var activationTime:Float;
 
-    var receipe:Receipe;
     var stats:AllStats;
     var time:Time;
 

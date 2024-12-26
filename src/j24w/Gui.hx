@@ -1,19 +1,24 @@
 package j24w;
 
-import fu.Signal;
+import update.UpdateBinder;
+import ec.CtxWatcher;
+import a2d.Widget;
+import al.Builder;
 import al.core.DataView;
-import j24w.FishyData;
+import al.ec.WidgetSwitcher;
+import al.layouts.PortionLayout;
 import ec.Entity;
+import fancy.domkit.Dkit.BaseDkit;
+import fancy.widgets.ProgressBarWidget;
+import fu.Signal;
+import fu.graphics.ColouredQuad;
+import fu.ui.ButtonBase;
 import gl.sets.ColorSet;
 import graphics.ShapesColorAssigner;
-import fu.ui.ButtonBase;
-import al.Builder;
-import al.ec.WidgetSwitcher;
+import j24w.FishyData;
 import j24w.FishyState;
-import a2d.Widget;
-import al.layouts.PortionLayout;
-import fancy.domkit.Dkit.BaseDkit;
-import fu.graphics.ColouredQuad;
+import j24w.Building;
+import update.Updatable;
 
 class GameView extends BaseDkit {
     @:once var popup:Popup;
@@ -32,59 +37,6 @@ class GameView extends BaseDkit {
     }
 }
 
-@:uiComp("slots-panel")
-class SlotsPanel extends BaseDkit {
-    var slots:Array<SlotView> = [];
-    @:once var state:FishyState;
-
-    static var SRC = <slots-panel vl={PortionLayout.instance}>
-    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-    </base>
-    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-    </base>
-
-    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
-
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
-    </base>
-
-    </slots-panel>
-
-    override function init() {
-        super.init();
-        for (i in 0...state.slots.length)
-            slots[i].bindSlot(state.slots[i], i);
-    }
-}
-
-@:uiComp("popup-title")
-class PopupTitle extends BaseDkit {
-    @:once var popup:Popup;
-
-    static var SRC = <popup-title hl={PortionLayout.center}>
-        ${fui.quad(__this__.ph, 0xFF0087AC)}
-        <label(b().h(pfr, 6).b()) id="lbl"  style={"small-text"} text={"window title"} />
-        <button(b().h(sfr, 0.05).b())  style={"center"} onClick={()->popup.close()} text={"X"} />
-    </popup-title>
-}
-
-class BuildingDetails extends BaseDkit {
-    static var SRC = <building-details vl={PortionLayout.instance}>
-        ${fui.quad(__this__.ph, 0xBC0B0A0A)}
-        <popup-title(b().v(sfr, .05).b()) />
-        <label(b().v(pfr, 6).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
-        <label(b().v(pfr, 6).b()) style={"small-text"} text={"upgrades"} />
-    </building-details>
-}
-
 class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
     static var SRC = <building-card >
 
@@ -101,7 +53,9 @@ class BuyBuilding extends BaseDkit {
     @:once var popup:Popup;
     @:once var defs:BuildingsDef;
     @:once var buying:BuyingBilding;
+
     public var slot:Int;
+
     var input:a2d.ChildrenPool.DataChildrenPool<BuildingDef, BuildingCard>;
 
     public var onChoice(default, null) = new IntSignal();
@@ -139,14 +93,71 @@ class BuyBuilding extends BaseDkit {
     }
 }
 
-class BuildingView extends BaseDkit {
-    static var SRC = <building-view >
+class ProdChainView extends BaseDkit implements DataView<ProductionChain> {
+    var progress:ProgressBarWidget;
+    var chain:ProductionChain;
+
+    static var SRC = <prod-chain-view vl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0xFF00961B)}
+            <label(b().v(sfr, 0.03).b()) id="lbl"  style={"fit"} text={"Hi1"} />
+            <base(b().l().v(pfr, 1).b()) >
+                ${fui.quad(__this__.ph, 0x397A0096)}
+                ${progress = new ProgressBarWidget(__this__.ph, 0xff8585)}
+            </base>
+ </prod-chain-view>
+
+    public function update() {
+        progress.setPtogress(chain.getProgress());
+    }
+
+    public function initData(descr:ProductionChain) {
+        chain = descr;
+        var srcLbl = [
+        for (sp in chain.receipe.src)
+             '${sp.resId} x ${sp.count}'].join(' + ');
+        var sp = chain.receipe.out;
+        lbl.text = '$srcLbl > ${sp.resId} x ${sp.count}';
+    }
+}
+
+class BuildingView extends BaseDkit implements Updatable {
+    var building:Building;
+    var input:a2d.ChildrenPool.DataChildrenPool<ProductionChain, ProdChainView>;
+
+    static var SRC = <building-view vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xff960000)}
-        <label(b().v(pfr, 6).b()) id="lbl"  style={"small-text"} text={"Hi1"} />
+        <label(b().v(pfr, 0.5).b()) id="lbl"  style={"small-text"} text={"Hi1"} />
+        <base(b().l().v(pfr, 1).b()) id="chainsContainer" vl={PortionLayout.instance}>
+        ${fui.quad(__this__.ph, 0x16C0FFCB)}
+
+        </base>
+
+        <label(b().v(pfr, 0.5).b())  style={"small-text"} text={"Hi1"} />
     </building-view>
 
+    public function update(dt) {
+        chainsContainer.c.refresh();
+        for (i in 0...building.chains.length)
+            input.pool[i].update();
+    }
+
+    override function init() {
+        super.init();
+        input = new fu.ui.InteractivePanelBuilder().withContainer(chainsContainer.c)
+            .withWidget(() -> new ProdChainView(b().h(pfr, 1).b()))
+            .build();
+        if (building != null)
+            input.initData(building.chains);
+        entity.addComponentByType(Updatable, this);
+        new CtxWatcher(UpdateBinder, entity);
+    }
+
     public function initData(building:Building) {
+        this.building = building;
         lbl.text = building.name;
+        if (!_inited)
+            return;
+        input.initData(building.chains);
     }
 }
 
@@ -215,5 +226,58 @@ class SlotView extends Widget {
                 building = null;
                 switcher.switchTo(ev.ph);
         }
+    }
+}
+
+@:uiComp("popup-title")
+class PopupTitle extends BaseDkit {
+    @:once var popup:Popup;
+
+    static var SRC = <popup-title hl={PortionLayout.center}>
+        ${fui.quad(__this__.ph, 0xFF0087AC)}
+        <label(b().h(pfr, 6).b()) id="lbl"  style={"small-text"} text={"window title"} />
+        <button(b().h(sfr, 0.05).b())  style={"center"} onClick={()->popup.close()} text={"X"} />
+    </popup-title>
+}
+
+class BuildingDetails extends BaseDkit {
+    static var SRC = <building-details vl={PortionLayout.instance}>
+        ${fui.quad(__this__.ph, 0xBC0B0A0A)}
+        <popup-title(b().v(sfr, .05).b()) />
+        <label(b().v(pfr, 6).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
+        <label(b().v(pfr, 6).b()) style={"small-text"} text={"upgrades"} />
+    </building-details>
+}
+
+@:uiComp("slots-panel")
+class SlotsPanel extends BaseDkit {
+    var slots:Array<SlotView> = [];
+    @:once var state:FishyState;
+
+    static var SRC = <slots-panel vl={PortionLayout.instance}>
+    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+    </base>
+    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+    </base>
+
+    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+        <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
+    </base>
+
+    </slots-panel>
+
+    override function init() {
+        super.init();
+        for (i in 0...state.slots.length)
+            slots[i].bindSlot(state.slots[i], i);
     }
 }
