@@ -42,7 +42,7 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
     static var SRC = <building-card vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC007DC0)}
         <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
-            <label(b().v(pfr, 0.3).b()) id="name"  style={"fit"} text={"Hi1"} />
+            <label(b().v(pfr, 0.3).b()) public id="name"  style={"fit"} text={"Hi1"} />
             <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="lvl"  style={"fit"} text={"Hi1"} />
         </base>
         <base(b().l().v(pfr, 1).b()) />
@@ -271,7 +271,8 @@ class PopupTitle extends BaseDkit {
 }
 
 class BuildingDetails extends BaseDkit {
-    var slot:Int = -1;
+    var slotId:Int = -1;
+    var slot:Slot;
     var building:Building;
     @:once var buying:BuyingBilding;
     @:once var state:FishyState;
@@ -293,7 +294,7 @@ class BuildingDetails extends BaseDkit {
             <base(b().v(pfr, 1).h(pfr, .1).b())  />
             <button(b().h(sfr, 0.25).b())  style={"center"} onClick={demolish} text={"demolish"} />
             <base(b().v(pfr, 1).h(pfr, .1).b())  />
-            <button(b().h(sfr, 0.25).b())  style={"center"} onClick={()->buying.upgrade(slot)} text={"upgrade"} />
+            <button(b().h(sfr, 0.25).b())  style={"center"} onClick={()->buying.upgrade(slotId)} text={"upgrade"} />
             <base(b().v(pfr, 1).h(pfr, .1).b())  />
         </base>
 
@@ -301,23 +302,34 @@ class BuildingDetails extends BaseDkit {
 
     override function init() {
         super.init();
-        if (slot > 0)
-            initForSlot(slot);
+
+        if (slotId > 0)
+            initForSlot(slotId);
     }
 
     function demolish() {
-        buying.demolish(slot);
+        buying.demolish(slotId);
         popup.close();
     }
 
     public function initForSlot(i) {
-        slot = i;
+        if(slot!=null)
+            slot.onChange.remove(slotValChanged);
+        slotId = i;
         if (!_inited)
             return;
-        building = state.slots[i].building;
-        current.initData(defs.getLvl(building.defId, building.level));
-        upgraded.initData(defs.getLvl(building.defId, building.level + 1));
+        slot = state.slots[i];
+        slot.onChange.listen(slotValChanged);
+        slotValChanged();
         titlebar.lbl.text = building.defId + " details";
+    }
+    
+    function slotValChanged(){
+        building = slot.building;
+        current.initData(defs.getLvl(building.defId, building.level));
+        current.name.text = building.defId;
+        upgraded.initData(defs.getLvl(building.defId, building.level + 1));
+        upgraded.name.text = building.defId;
     }
 }
 
