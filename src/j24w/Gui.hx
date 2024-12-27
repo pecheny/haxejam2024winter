@@ -52,6 +52,10 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
 
         </base>
 
+        <base(b().v(pfr, 0.3).b()) hl={PortionLayout.instance}>
+            <label(b().h(pfr, 0.5).v(sfr, 0.04).b())  style={"fit"} text={"price: "} />
+            <label(b().v(pfr, 0.3).b()) public id="price"  style={"fit"} text={"Hi1"} />
+        </base>
  </building-card>
 
     public function initData(descr:BuildingDef) {
@@ -67,6 +71,7 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
             chainsDesc += '$srcLbl > ${sp.resId} x ${sp.count} / ${ch.cooldown} s <br/>';
         }
         chains.text = chainsDesc;
+        price.text = "" + descr.price[descr.curLvl]  + " bucks";
     }
 }
 
@@ -328,6 +333,7 @@ class BuildingDetails extends BaseDkit {
         building = slot.building;
         current.initData(defs.getLvl(building.defId, building.level));
         current.name.text = building.defId;
+        current.price.text = "purchased";
         upgraded.initData(defs.getLvl(building.defId, building.level + 1));
         upgraded.name.text = building.defId;
     }

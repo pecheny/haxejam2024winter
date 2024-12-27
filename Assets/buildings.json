@@ -1,5 +1,6 @@
 {
     "farm":{
+        "price":[5,10,120,500,1500, 3000, 10000, 20000, 100000],
         "actions":[ { "out": {"resId":"shell", "count":2}, "src": [],   "cooldown":5 } ],
         "levels":[
             {},
@@ -9,6 +10,7 @@
         ]
     },
     "kiosk":{
+        "price":[5,100,2000,1400, 10000],
         "actions":[ { "out":{"resId":"buck", "count":10},  "src": [{"resId":"shell", "count":5}], "cooldown":5 } ],
 
         "levels":[

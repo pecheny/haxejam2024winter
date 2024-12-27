@@ -8,8 +8,13 @@ import bootstrap.DefNode.Leveled;
 class BuildingsDef extends DefLvlNode<BuildingDef> { }
 typedef BuildingDef = {
     >Leveled,
+    >Merch,
     actions:Array<Receipe>,
     defId:String
+}
+
+typedef Merch = {
+    price:Array<Int>
 }
 
 typedef Receipe = {
