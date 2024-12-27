@@ -1,5 +1,6 @@
 package;
 
+import j24w.Menu;
 import bootstrap.SimpleRunBinder;
 import j24w.CheckoutGui.CheckoutView;
 import j24w.CheckoutGui.GameOverView;
@@ -24,7 +25,7 @@ import openfl.utils.Assets;
 using a2d.transform.LiquidTransformer;
 using al.Builder;
 
-class Main extends BootstrapMain {
+class Main extends BootstrapMain implements Lifecycle {
     var sr:SimpleRunBinder;
     var run:GameRun;
 
@@ -46,9 +47,10 @@ class Main extends BootstrapMain {
 
         SpeedProp.getOrCreate(entity);
         entity.addComponent(state.time);
+        entity.addComponentByType(Lifecycle, this);
         entity.addComponent(state.stats);
         var go = entity.addComponent(new GameOverView(Builder.widget()));
-        go.onDone.listen(startNewGame);
+        // go.onDone.listen(startNewGame);
         var mw = Builder.widget();
         entity.addComponent(new GameView(mw));
         entity.addComponent(new CheckoutView(Builder.widget()));
@@ -71,14 +73,17 @@ class Main extends BootstrapMain {
         // run.entity.addComponentByType(GameRun, run);
 
         createPopup();
-        startNewGame();
+        var m = new Menu(Builder.widget());
+        fui.makeClickInput(m.ph);
+        rootEntity.getComponent(WidgetSwitcher).switchTo(m.ph);
+
     }
 
     override function createRunWrapper() {
         sr = new SimpleRunBinder(rootEntity, null);
     }
 
-    function startNewGame() {
+    public function newGame() {
         if (!run.entity.hasComponent(GameRun))
             run.entity.addComponentByType(GameRun, run);
         rootEntity.getComponent(FishyState).load(Json.parse(openfl.utils.Assets.getText("state.json")));
@@ -86,6 +91,9 @@ class Main extends BootstrapMain {
         rootEntity.getComponent(Popup).close();
     }
     
+    public function resume() {
+    
+    }
 
     override function iniUpdater() {
         var updater = new bootstrap.RunUpdater();
@@ -105,14 +113,19 @@ class Main extends BootstrapMain {
         var switcher = new WidgetSwitcher(ph);
         rootEntity.addComponent(new Popup(switcher, fui));
     }
+
     override function textStyles() {
         super.textStyles();
-		var ts = fui.textStyles;
-		ts.newStyle("right")
-			.withSize(sfr, .07)
-			// .withPadding(horizontal, sfr, 0.1)
-			.withAlign(vertical, Center)
-			.withAlign(horizontal, Backward)
-			.build();
+        var ts = fui.textStyles;
+        ts.newStyle("right")
+            .withSize(sfr, .07) // .withPadding(horizontal, sfr, 0.1)
+            .withAlign(vertical, Center)
+            .withAlign(horizontal, Backward)
+            .build();
     }
+}
+
+interface Lifecycle {
+    function newGame():Void;
+    function resume():Void;
 }
