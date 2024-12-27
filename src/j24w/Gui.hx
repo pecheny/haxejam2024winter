@@ -267,7 +267,6 @@ class SlotView extends Widget {
     }
 
     function onSlotChanged() {
-        trace("slot changed");
         switch slot.value {
             case Building(b):
                 bv.initData(b);

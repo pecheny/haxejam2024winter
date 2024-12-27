@@ -1,11 +1,14 @@
 package j24w;
 
+import Main.Lifecycle;
 import al.layouts.PortionLayout;
 import ec.Signal;
 import fancy.domkit.Dkit;
 
 class GameOverView extends BaseDkit {
     public var onDone:Signal<Void->Void> = new Signal();
+
+    @:once var l:Lifecycle;
 
     static var SRC = <game-over-view vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0xBC0B0A0A)}
@@ -15,7 +18,8 @@ class GameOverView extends BaseDkit {
     </game-over-view>
 
     function done() {
-        onDone.dispatch();
+        // onDone.dispatch();
+        l.showMenu();
     }
 }
 

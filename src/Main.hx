@@ -42,6 +42,10 @@ class Main extends BootstrapMain implements Lifecycle {
             ec.DebugInit.initCheck.dispatch();
         });
 
+        kbinder.addCommand(Keyboard.ESCAPE, () -> {
+            showMenu();
+        });
+
         var entity = rootEntity;
         var state = entity.addComponent(new FishyState());
 
@@ -65,7 +69,7 @@ class Main extends BootstrapMain implements Lifecycle {
 
         #if sys
         kbinder.addCommand(Keyboard.S, () -> {
-            sys.io.File.saveContent("state.json", Json.stringify(run.entity.getComponent(FishyState).serialize(), null, " "));
+            sys.io.File.saveContent("state.json", Json.stringify(rootEntity.getComponent(FishyState).serialize(), null, " "));
         });
         #end
         new CtxWatcher(GameRunBinder, run.entity);
@@ -74,8 +78,11 @@ class Main extends BootstrapMain implements Lifecycle {
 
         createPopup();
         var m = new Menu(Builder.widget());
+        rootEntity.addComponent(m);
         fui.makeClickInput(m.ph);
         rootEntity.getComponent(WidgetSwitcher).switchTo(m.ph);
+        run.entity.addComponentByType(GameRun, run);
+        showMenu();
 
     }
 
@@ -84,15 +91,40 @@ class Main extends BootstrapMain implements Lifecycle {
     }
 
     public function newGame() {
-        if (!run.entity.hasComponent(GameRun))
-            run.entity.addComponentByType(GameRun, run);
+        // if (!run.entity.hasComponent(GameRun))
+        //     run.entity.addComponentByType(GameRun, run);
         rootEntity.getComponent(FishyState).load(Json.parse(openfl.utils.Assets.getText("state.json")));
         @:privateAccess sr.startGame();
         rootEntity.getComponent(Popup).close();
+        rootEntity.getComponent(Pause).pause(false);
     }
-    
+
     public function resume() {
-    
+        rootEntity.getComponent(WidgetSwitcher).switchTo(run.getView());
+        rootEntity.getComponent(Pause).pause(false);
+    }
+
+    public function saveGame():Void {
+        #if sys
+        sys.io.File.saveContent("save.json", Json.stringify(rootEntity.getComponent(FishyState).serialize(), null, " "));
+        #end
+    }
+
+    public function loadGame():Void {
+        #if sys
+        if (!sys.FileSystem.exists("save.json"))
+            return;
+        rootEntity.getComponent(FishyState).load(Json.parse(sys.io.File.getContent("save.json")));
+        @:privateAccess sr.startGame();
+        rootEntity.getComponent(Popup).close();
+        rootEntity.getComponent(Pause).pause(false);
+        #end
+    }
+
+    public function showMenu():Void {
+        rootEntity.getComponent(Pause).pause(true);
+        rootEntity.getComponent(Popup).close();
+        rootEntity.getComponent(WidgetSwitcher).switchTo(rootEntity.getComponent(Menu).ph);
     }
 
     override function iniUpdater() {
@@ -127,5 +159,8 @@ class Main extends BootstrapMain implements Lifecycle {
 
 interface Lifecycle {
     function newGame():Void;
+    function saveGame():Void;
+    function loadGame():Void;
     function resume():Void;
+    function showMenu():Void;
 }

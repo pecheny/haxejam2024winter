@@ -41,7 +41,6 @@ class Building extends Component implements Updatable {
         this.defId = defId;
         this.level = level;
         var def = defs.getLvl(defId, level);
-        trace(def.actions);
         if (timings == null)
             for (a in def.actions)
                 addAction(a, time.getTime() + a.cooldown);
