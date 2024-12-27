@@ -1,5 +1,6 @@
 package j24w;
 
+import haxe.Json;
 import a2d.Placeholder2D;
 import gameapi.GameRun;
 import j24w.CheckoutGui.CheckoutView;
@@ -22,6 +23,7 @@ class MainGameplayLoop extends GameRunBase {
     }
 
     override function startGame() {
+        checkout.reset();
         act = buisiness;
         buisiness.startGame();
     }
@@ -47,13 +49,21 @@ class MainGameplayLoop extends GameRunBase {
 // class TollProperty extends PropertyComponent<Int> { }
 
 class CheckoutRun extends GameRunBase {
+    override function reset() {
+        super.reset();
+        var d = Date.now();
+        session = "" + d.getDay() + "-" + d.getHours()  + "-" + d.getMinutes();
+    }
+
     @:once var stats:AllStats;
     @:once var state:FishyState;
     @:once var popup:Popup;
     @:once var go:GameOverView;
     @:once var co:CheckoutView;
+    var session:String; 
 
     override function startGame() {
+        dumpState();
         state.month++;
         if (stats.shell.value < stats.toll.value) {
             popup.switchTo(go.ph);
@@ -75,5 +85,11 @@ class CheckoutRun extends GameRunBase {
 
     function currentToll() {
         return Std.int(20 + 20 * state.month * 1.2);
+    }
+    
+    function dumpState() {
+        #if sys
+        sys.io.File.saveContent('$session-${state.month}.json', Json.stringify(state.serialize(), null, " "));
+        #end
     }
 }
