@@ -48,6 +48,8 @@ class Main extends BootstrapMain {
         entity.addComponent(state.stats);
         var go = entity.addComponent(new GameOverView(Builder.widget()));
         go.onDone.listen(startNewGame);
+        var mw = Builder.widget();
+        entity.addComponent(new GameView(mw));
         entity.addComponent(new CheckoutView(Builder.widget()));
         var bg = entity.addComponent(new BuisinessGame(new Entity("buisiness-run"), Builder.widget()));
         entity.addChild(bg.entity);
@@ -55,7 +57,7 @@ class Main extends BootstrapMain {
         entity.addChild(co.entity);
 
         //
-        run = new MainGameplayLoop(new Entity("mainloop"), Builder.widget());
+        run = new MainGameplayLoop(new Entity("mainloop"), mw);
         // run.state.load(Json.parse(Assets.getText("state.json")));
 
         #if sys
@@ -82,6 +84,7 @@ class Main extends BootstrapMain {
         @:privateAccess sr.startGame();
         rootEntity.getComponent(Popup).close();
     }
+    
 
     override function iniUpdater() {
         var updater = new bootstrap.RunUpdater();
@@ -100,5 +103,15 @@ class Main extends BootstrapMain {
         fui.createContainer(popup, Xml.parse(GuiDrawcalls.DRAWCALLS_LAYOUT).firstElement());
         var switcher = new WidgetSwitcher(ph);
         rootEntity.addComponent(new Popup(switcher, fui));
+    }
+    override function textStyles() {
+        super.textStyles();
+		var ts = fui.textStyles;
+		ts.newStyle("right")
+			.withSize(sfr, .07)
+			// .withPadding(horizontal, sfr, 0.1)
+			.withAlign(vertical, Center)
+			.withAlign(horizontal, Backward)
+			.build();
     }
 }

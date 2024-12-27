@@ -13,7 +13,7 @@ import j24w.Building;
 import stset.Stats;
 
 class BuisinessGame extends GameRunBase {
-    var gui:GameView;
+    @:once var gui:GameView;
     var buying:BuyingBilding;
     @:once var state:FishyState;
 
@@ -28,7 +28,6 @@ class BuisinessGame extends GameRunBase {
         var bdefs = new BuildingsDef("buildings", openfl.utils.Assets.getLibrary(""));
         // var bdefs = new BuildingsDef(new DefNode("buildings", openfl.utils.Assets.getLibrary("")).get);
         entity.addComponent(bdefs);
-        gui = new GameView(getView());
         buying = entity.addComponent(new BuyingBilding());
         gui.watch(entity);
         var bb = gui.entity.addAliasByName(Entity.getComponentId(BuyBuilding), new BuyBuilding(Builder.widget()));

@@ -25,8 +25,14 @@ class GameView extends BaseDkit {
     @:once var popup:Popup;
 
     static var SRC = <game-view vl={PortionLayout.instance}>
+    <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
+        <label(b().h(pfr, 0.1).b())  style={"fit"} text={"month:"} />
+        <label(b().h(pfr, 0.1).b()) public id="month"  style={"right"} text={"1"} />
+        <label(b().h(pfr, 0.1).b())  style={"fit"} text={"day:"} />
+        <label(b().h(pfr, 0.1).b()) public id="day"  style={"right"} text={""} />
         <base(b().v(pfr, 1).b())>
             ${new fancy.widgets.StatsDisplay(__this__.ph); }
+        </base>
         </base>
         <slots-panel(b().v(pfr, 6).b()) id="slots" vl={PortionLayout.instance}   />
     </game-view>

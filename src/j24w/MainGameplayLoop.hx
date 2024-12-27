@@ -1,19 +1,19 @@
 package j24w;
 
-import haxe.Json;
-import a2d.Placeholder2D;
+import bootstrap.GameRunBase;
 import gameapi.GameRun;
+import haxe.Json;
 import j24w.CheckoutGui.CheckoutView;
 import j24w.CheckoutGui.GameOverView;
-import ec.PropertyComponent;
 import j24w.FishyState.AllStats;
-import bootstrap.GameRunBase;
+import j24w.Gui.GameView;
 
 class MainGameplayLoop extends GameRunBase {
     @:once var state:FishyState;
     @:once var time:Time;
     @:once var buisiness:BuisinessGame;
     @:once var checkout:CheckoutRun;
+    @:once var gui:GameView;
 
     var act:GameRun;
 
@@ -34,6 +34,9 @@ class MainGameplayLoop extends GameRunBase {
 
     override function update(dt:Float) {
         var curMon = Math.floor(time.getTime() / 30);
+        var curDay = Math.floor(time.getTime());
+        gui.day.text = "" + curDay;
+        gui.month.text = "" + curMon;
         if (curMon > state.month) {
             act = checkout;
             checkout.startGame();
@@ -41,9 +44,9 @@ class MainGameplayLoop extends GameRunBase {
         act.update(dt);
     }
 
-    override function getView():Placeholder2D {
-        return buisiness.getView();
-    }
+    // override function getView():Placeholder2D {
+    //     return buisiness.getView();
+    // }
 }
 
 // class TollProperty extends PropertyComponent<Int> { }
@@ -52,7 +55,7 @@ class CheckoutRun extends GameRunBase {
     override function reset() {
         super.reset();
         var d = Date.now();
-        session = "" + d.getDay() + "-" + d.getHours()  + "-" + d.getMinutes();
+        session = "" + d.getDay() + "-" + d.getHours() + "-" + d.getMinutes();
     }
 
     @:once var stats:AllStats;
@@ -60,7 +63,7 @@ class CheckoutRun extends GameRunBase {
     @:once var popup:Popup;
     @:once var go:GameOverView;
     @:once var co:CheckoutView;
-    var session:String; 
+    var session:String;
 
     override function startGame() {
         dumpState();
@@ -86,7 +89,7 @@ class CheckoutRun extends GameRunBase {
     function currentToll() {
         return Std.int(20 + 5 * state.month * 1.5);
     }
-    
+
     function dumpState() {
         #if sys
         sys.io.File.saveContent('$session-${state.month}.json', Json.stringify(state.serialize(), null, " "));
