@@ -8,6 +8,7 @@ class GameOverView extends BaseDkit {
     public var onDone:Signal<Void->Void> = new Signal();
 
     static var SRC = <game-over-view vl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0xBC0B0A0A)}
             <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"game over"} />
             <button(b().v(pfr, 0.1).b()) text={"ok"} onClick={done} />
 
@@ -22,6 +23,8 @@ class CheckoutView extends BaseDkit {
     public var onDone:Signal<Void->Void> = new Signal();
 
     static var SRC = <checkout-view vl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0xBC0B0A0A)}
+
             <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"month over, toll payed"} />
             <button(b().v(pfr, 0.1).b()) text={"ok"} onClick={done} />
     </checkout-view>
