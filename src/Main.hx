@@ -44,6 +44,7 @@ class Main extends BootstrapMain {
         var entity = rootEntity;
         var state = entity.addComponent(new FishyState());
 
+        SpeedProp.getOrCreate(entity);
         entity.addComponent(state.time);
         entity.addComponent(state.stats);
         var go = entity.addComponent(new GameOverView(Builder.widget()));

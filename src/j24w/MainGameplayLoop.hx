@@ -1,5 +1,6 @@
 package j24w;
 
+import ec.PropertyComponent;
 import bootstrap.GameRunBase;
 import gameapi.GameRun;
 import haxe.Json;
@@ -14,6 +15,7 @@ class MainGameplayLoop extends GameRunBase {
     @:once var buisiness:BuisinessGame;
     @:once var checkout:CheckoutRun;
     @:once var gui:GameView;
+    @:once var speed:SpeedProp;
 
     var act:GameRun;
 
@@ -41,12 +43,41 @@ class MainGameplayLoop extends GameRunBase {
             act = checkout;
             checkout.startGame();
         }
-        act.update(dt);
+        for (i in 0...speed.value)
+            act.update(dt);
     }
 
     // override function getView():Placeholder2D {
     //     return buisiness.getView();
     // }
+}
+
+abstract Speed(Array<Int>)  {
+	public inline function new() {
+		this = [1, 1, 3, 5, 10];
+	}
+
+	@:op(A++) public inline function inc() {
+		var i = this[0];
+		i++;
+		if (i >= this.length)
+			i = 1;
+		this[0] = i;
+    return this;
+	}
+
+	@:to function getInt():Int
+		return this[this[0]];
+  
+  @:to function toString():String
+		return "" + this[this[0]];
+}
+
+class SpeedProp extends PropertyComponent<Speed>{
+    public function new() {
+        super();
+        value = new Speed();
+    }
 }
 
 // class TollProperty extends PropertyComponent<Int> { }

@@ -1,5 +1,6 @@
 package j24w;
 
+import j24w.MainGameplayLoop.SpeedProp;
 import a2d.Placeholder2D;
 import update.UpdateBinder;
 import ec.CtxWatcher;
@@ -23,19 +24,28 @@ import update.Updatable;
 
 class GameView extends BaseDkit {
     @:once var popup:Popup;
+    @:once var speed:SpeedProp;
 
     static var SRC = <game-view vl={PortionLayout.instance}>
     <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
-        <label(b().h(pfr, 0.1).b())  style={"fit"} text={"month:"} />
+        <label(b().h(pfr, 0.03).b())  style={"fit"} text={"mnt:"} />
         <label(b().h(pfr, 0.1).b()) public id="month"  style={"right"} text={"1"} />
-        <label(b().h(pfr, 0.1).b())  style={"fit"} text={"day:"} />
-        <label(b().h(pfr, 0.1).b()) public id="day"  style={"right"} text={""} />
+        <label(b().h(pfr, 0.03).b())  style={"fit"} text={"day:"} />
+        <label(b().h(pfr, 0.12).b()) public id="day"  style={"right"} text={""} />
+        <label(b().h(pfr, 0.07).b())  style={"fit"} text={"spd:"} />
+        <button(b().h(pfr, 0.05).b())  id="spd" onClick={onSpd} text={"1"} style={"fit"}/>
         <base(b().v(pfr, 1).b())>
             ${new fancy.widgets.StatsDisplay(__this__.ph); }
         </base>
         </base>
         <slots-panel(b().v(pfr, 6).b()) id="slots" vl={PortionLayout.instance}   />
     </game-view>
+    
+    function onSpd() {
+        var sa = speed.value;
+        sa++;
+        spd.text = speed.value;
+    }
 
     override function init() {
         super.init();
