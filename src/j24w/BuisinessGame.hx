@@ -13,14 +13,14 @@ import j24w.Building;
 import stset.Stats;
 
 class BuisinessGame extends GameRunBase {
-    var state = new FishyState();
     var gui:GameView;
     var buying:BuyingBilding;
+    @:once var state:FishyState;
 
-    public function new(e, ph) {
-        super(e, ph);
-        init();
-    }
+    // public function new(e, ph) {
+    //     super(e, ph);
+    //     init();
+    // }
 
     var buildings:Array<Updatable> = [];
     override function init() {
@@ -29,10 +29,7 @@ class BuisinessGame extends GameRunBase {
         // var bdefs = new BuildingsDef(new DefNode("buildings", openfl.utils.Assets.getLibrary("")).get);
         entity.addComponent(bdefs);
         gui = new GameView(getView());
-        entity.addComponent(state);
         buying = entity.addComponent(new BuyingBilding());
-        entity.addComponent(state.time);
-        entity.addComponent(state.stats);
         gui.watch(entity);
         var bb = gui.entity.addAliasByName(Entity.getComponentId(BuyBuilding), new BuyBuilding(Builder.widget()));
         bb.watch(entity);
@@ -45,7 +42,6 @@ class BuisinessGame extends GameRunBase {
         }
 
         gui.entity.addComponentByType(StatsSet, state.stats);
-        state.load(Json.parse(openfl.utils.Assets.getText("state.json")));
     }
 
     override function update(dt:Float) {

@@ -11,6 +11,7 @@ class FishyState {
     public var slots(default, null):ReadOnlyArray<Slot>;
     public var stats(default, null):AllStats = new AllStats({});
     public var time:Time = new Time();
+    public var month:Int = 0;
 
     public function new() {
         slots = [for (i in 0...9) new Slot(i)];
@@ -21,7 +22,8 @@ class FishyState {
         return {
             time: time.t,
             stats: stats.getData(),
-            slots: serializeSlots()
+            slots: serializeSlots(),
+            month:month
         }
     }
 
@@ -36,6 +38,7 @@ class FishyState {
             } else
                 slots[i].value = Empty;
         }
+        this.month = state.month ?? 0;
     }
 
     function serializeSlots() {
@@ -88,6 +91,7 @@ class AllStats implements StatsSet {
     public var algae(default, null):GameStat<Int>; // водрослт
     public var bivalvia(default, null):GameStat<Int>; // двустворчатые
     public var buck(default, null):GameStat<Int>;
+    public var toll(default, null):GameStat<Int>;
 
     public function initAll(data:{}) {
         for (k in keys) {

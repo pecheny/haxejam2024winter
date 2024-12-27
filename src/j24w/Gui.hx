@@ -58,13 +58,13 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
         name.text = descr.defId;
         lvl.text = "" + descr.curLvl;
         var chainsDesc = "";
-        for (ch in descr.actions){
+        for (ch in descr.actions) {
             var srcLbl = [
                 for (sp in ch.src)
                     '${sp.resId} x ${sp.count}'
             ].join(' + ');
             var sp = ch.out;
-            chainsDesc  += '$srcLbl > ${sp.resId} x ${sp.count} / ${ch.cooldown} s <br/>';
+            chainsDesc += '$srcLbl > ${sp.resId} x ${sp.count} / ${ch.cooldown} s <br/>';
         }
         chains.text = chainsDesc;
     }
@@ -171,7 +171,10 @@ class BuildingView extends BaseDkit implements Updatable {
 
     override function init() {
         super.init();
-        input = new fu.ui.InteractivePanelBuilder().withInput((_,_)->{}).withContainer(chainsContainer.c).withWidget(() -> new ProdChainView(b().v(sfr, 0.02).b())).build();
+        input = new fu.ui.InteractivePanelBuilder().withInput((_, _) -> {})
+            .withContainer(chainsContainer.c)
+            .withWidget(() -> new ProdChainView(b().v(sfr, 0.02).b()))
+            .build();
         if (building != null)
             input.initData(building.chains);
         entity.addComponentByType(Updatable, this);
@@ -181,7 +184,7 @@ class BuildingView extends BaseDkit implements Updatable {
     public function initData(building:Building) {
         this.building = building;
         name.text = building.defId;
-        lvl.text = ""+ building.level + " lvl";
+        lvl.text = "" + building.level + " lvl";
         if (!_inited)
             return;
         input.initData(building.chains);
@@ -268,7 +271,7 @@ class PopupTitle extends BaseDkit {
 }
 
 class BuildingDetails extends BaseDkit {
-    var slot:Int;
+    var slot:Int = -1;
     var building:Building;
     @:once var buying:BuyingBilding;
     @:once var state:FishyState;
@@ -298,7 +301,8 @@ class BuildingDetails extends BaseDkit {
 
     override function init() {
         super.init();
-        initForSlot(slot);
+        if (slot > 0)
+            initForSlot(slot);
     }
 
     function demolish() {
@@ -314,7 +318,6 @@ class BuildingDetails extends BaseDkit {
         current.initData(defs.getLvl(building.defId, building.level));
         upgraded.initData(defs.getLvl(building.defId, building.level + 1));
         titlebar.lbl.text = building.defId + " details";
-
     }
 }
 
