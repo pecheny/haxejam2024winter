@@ -39,14 +39,34 @@ class GameView extends BaseDkit {
 }
 
 class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
-    static var SRC = <building-card >
-
+    static var SRC = <building-card vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC007DC0)}
-        <label(b().v(pfr, 6).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
+        <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
+            <label(b().v(pfr, 0.3).b()) id="name"  style={"fit"} text={"Hi1"} />
+            <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="lvl"  style={"fit"} text={"Hi1"} />
+        </base>
+        <base(b().l().v(pfr, 1).b()) />
+        <base(b().l().v(pfr, 0.5).b()) id="chainsContainer" vl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0x16C0FFCB)}
+            <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="chains"  style={"fit"} text={"Hi1"} />
+
+        </base>
+
  </building-card>
 
     public function initData(descr:BuildingDef) {
-        lbl.text = descr.name;
+        name.text = descr.defId;
+        lvl.text = "" + descr.curLvl;
+        var chainsDesc = "";
+        for (ch in descr.actions){
+            var srcLbl = [
+                for (sp in ch.src)
+                    '${sp.resId} x ${sp.count}'
+            ].join(' + ');
+            var sp = ch.out;
+            chainsDesc  += '$srcLbl > ${sp.resId} x ${sp.count} / ${ch.cooldown} s <br/>';
+        }
+        chains.text = chainsDesc;
     }
 }
 
@@ -77,11 +97,12 @@ class BuyBuilding extends BaseDkit {
             .withWidget(() -> new BuildingCard(b().h(sfr, 0.3).v(sfr, 0.3).b()))
             .withSignal(onChoice)
             .build();
-        var defs = defs.getDyn("");
+        var defsd = defs.getDyn("");
         var dd = [];
-        for (f in Reflect.fields(defs)) {
-            var d = Reflect.field(defs, f);
-            d.name = f;
+        for (f in Reflect.fields(defsd)) {
+            var d = defs.getLvl(f, 0);
+            d.defId = f;
+            // d.name = f;
             dd.push(d);
             defIds.push(f);
         }
@@ -252,14 +273,27 @@ class BuildingDetails extends BaseDkit {
     @:once var buying:BuyingBilding;
     @:once var state:FishyState;
     @:once var popup:Popup;
+    @:once var defs:BuildingsDef;
 
     static var SRC = <building-details vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC0B0A0A)}
         <popup-title(b().v(sfr, .05).b()) id="titlebar" />
-        <label(b().v(pfr, 1).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
-        <button(b().h(sfr, 0.25).b())  style={"center"} onClick={demolish} text={"demolish"} />
-        <button(b().h(sfr, 0.25).b())  style={"center"} onClick={()->buying.upgrade(slot)} text={"upgrade"} />
-        <label(b().v(pfr, 6).b()) style={"small-text"} text={"upgrades"} />
+        <label(b().v(pfr, .1).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
+        <base(b().v(pfr, 1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+            <base(b().v(pfr, 1).h(pfr, .1).b())  />
+            <building-card(b().b()) id="current" />
+            <base(b().v(pfr, 1).h(pfr, .1).b())  />
+            <building-card(b().b()) id="upgraded" />
+            <base(b().v(pfr, 1).h(pfr, .1).b())  />
+        </base>
+        <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+            <base(b().v(pfr, 1).h(pfr, .1).b())  />
+            <button(b().h(sfr, 0.25).b())  style={"center"} onClick={demolish} text={"demolish"} />
+            <base(b().v(pfr, 1).h(pfr, .1).b())  />
+            <button(b().h(sfr, 0.25).b())  style={"center"} onClick={()->buying.upgrade(slot)} text={"upgrade"} />
+            <base(b().v(pfr, 1).h(pfr, .1).b())  />
+        </base>
+
     </building-details>
 
     override function init() {
@@ -277,7 +311,10 @@ class BuildingDetails extends BaseDkit {
         if (!_inited)
             return;
         building = state.slots[i].building;
+        current.initData(defs.getLvl(building.defId, building.level));
+        upgraded.initData(defs.getLvl(building.defId, building.level + 1));
         titlebar.lbl.text = building.defId + " details";
+
     }
 }
 

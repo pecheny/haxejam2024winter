@@ -9,7 +9,7 @@ class BuildingsDef extends DefLvlNode<BuildingDef> { }
 typedef BuildingDef = {
     >Leveled,
     actions:Array<Receipe>,
-    name:String
+    defId:String
 }
 
 typedef Receipe = {
