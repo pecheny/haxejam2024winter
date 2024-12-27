@@ -2,10 +2,7 @@
  "slots": [
   {
    "defId": "farm",
-   "level": 0,
-   "timings": [
-    10
-   ]
+   "level": 0
   },
   {
    "isEmpty": true
@@ -34,13 +31,13 @@
  ],
  "stats": {
   "shell": {
-   "max": 100,
+   "max": 10000,
    "value": 2
   },
   "algae": 0,
   "toll": 0,
   "bivalvia": 0,
-  "buck": 0
+  "buck": 100
  },
- "time": 5.490999926
+ "time": 0.0
 }

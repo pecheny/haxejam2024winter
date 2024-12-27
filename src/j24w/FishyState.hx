@@ -88,8 +88,8 @@ class AllStats implements StatsSet {
     public var shell(default, null):CapGameStat<Int>;
 
     // public var alg_mp(default, null):TempIncGameStat<Int>;
-    public var algae(default, null):GameStat<Int>; // водрослт
-    public var bivalvia(default, null):GameStat<Int>; // двустворчатые
+    public var lamin(default, null):GameStat<Int>; // водрослт
+    public var plank(default, null):GameStat<Int>; // водрослт
     public var buck(default, null):GameStat<Int>;
     public var toll(default, null):GameStat<Int>;
 

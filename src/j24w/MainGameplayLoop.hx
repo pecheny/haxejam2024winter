@@ -33,7 +33,7 @@ class MainGameplayLoop extends GameRunBase {
     }
 
     override function update(dt:Float) {
-        var curMon = Math.floor(time.getTime() / 10);
+        var curMon = Math.floor(time.getTime() / 30);
         if (curMon > state.month) {
             act = checkout;
             checkout.startGame();
@@ -84,7 +84,7 @@ class CheckoutRun extends GameRunBase {
     }
 
     function currentToll() {
-        return Std.int(20 + 20 * state.month * 1.2);
+        return Std.int(20 + 5 * state.month * 1.5);
     }
     
     function dumpState() {

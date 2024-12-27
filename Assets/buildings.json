@@ -6,16 +6,39 @@
             {},
             {        "actions":[ { "out": {"resId":"shell", "count":3}, "src": [],   "cooldown":5 } ] },
             {        "actions":[ { "out": {"resId":"shell", "count":4}, "src": [],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":4}, "src": [],   "cooldown":2 } ] }
+            {        "actions":[ { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":20}, "src": [{"resId":"lamin", "count":1}],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":5}],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":4}],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":4}],   "cooldown":3 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":3}],   "cooldown":3 } ] }
         ]
     },
     "kiosk":{
         "price":[5,100,2000,1400, 10000],
         "actions":[ { "out":{"resId":"buck", "count":10},  "src": [{"resId":"shell", "count":5}], "cooldown":5 } ],
-
         "levels":[
-
+            {},
+            {        "actions":[ { "out":{"resId":"buck", "count":20},  "src": [{"resId":"shell", "count":10}], "cooldown":5 } ] },
+            {        "actions":[ { "out":{"resId":"buck", "count":50},  "src": [{"resId":"shell", "count":20}], "cooldown":5 } ] },
+            {        "actions":[ { "out":{"resId":"buck", "count":50},  "src": [{"resId":"shell", "count":20}], "cooldown":3 } ] },
+            {        "actions":[ { "out":{"resId":"buck", "count":500},  "src": [{"resId":"shell", "count":200}], "cooldown":3 } ] }
         ]
-    }
+    },
+    "garden":{
+        "price":[5,100,2000,1400],
+        "actions":[ { "out":{"resId":"lamin", "count":1},     "src": [{"resId":"shell", "count":5}], "cooldown":15 } ],
+        "levels":[
+            {},
+            {        "actions":[ { "out":{"resId":"lamin", "count":2},  "src": [{"resId":"shell", "count":10}], "cooldown":15 } ] },
+            {        "actions":[ { "out":{"resId":"lamin", "count":3},  "src": [{"resId":"shell", "count":20}], "cooldown":15 } ] },
+            {        "actions":[ { "out":{"resId":"lamin", "count":3},  "src": [{"resId":"shell", "count":20}], "cooldown":10 } ] }
+        ]
+    },
 
+    "storage":{
+        "price":[100],
+        "actions":[],
+        "capacity":[{"resId":"shell", "count":100}]
+    }
 }
