@@ -1,38 +1,39 @@
 {
     "farm":{
-        "price":[5,10,120,500,1500, 3000, 10000, 20000, 100000],
+        "price":[5,10,100,300,1000, 3000, 10000, 20000, 100000],
         "actions":[ { "out": {"resId":"shell", "count":2}, "src": [],   "cooldown":5 } ],
         "levels":[
             {},
             {        "actions":[ { "out": {"resId":"shell", "count":3}, "src": [],   "cooldown":5 } ] },
             {        "actions":[ { "out": {"resId":"shell", "count":4}, "src": [],   "cooldown":5 } ] },
             {        "actions":[ { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":20}, "src": [{"resId":"lamin", "count":1}],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":5}],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":4}],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":4}],   "cooldown":3 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":3}],   "cooldown":3 } ] }
+            {        "actions":[ { "out": {"resId":"shell", "count":20}, "src": [{"resId":"lamin", "count":1}],   "cooldown":5 } , { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":5}],   "cooldown":5 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":200}, "src": [{"resId":"lamin", "count":7}],   "cooldown":5 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":200}, "src": [{"resId":"lamin", "count":5}],   "cooldown":3 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":300}, "src": [{"resId":"lamin", "count":7}],   "cooldown":3 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] }
         ]
     },
     "kiosk":{
-        "price":[5,100,2000,1400, 10000],
+        "price":[5,100, 500,1400, 10000],
         "actions":[ { "out":{"resId":"buck", "count":10},  "src": [{"resId":"shell", "count":5}], "cooldown":5 } ],
         "levels":[
             {},
-            {        "actions":[ { "out":{"resId":"buck", "count":20},  "src": [{"resId":"shell", "count":10}], "cooldown":5 } ] },
-            {        "actions":[ { "out":{"resId":"buck", "count":50},  "src": [{"resId":"shell", "count":20}], "cooldown":5 } ] },
-            {        "actions":[ { "out":{"resId":"buck", "count":50},  "src": [{"resId":"shell", "count":20}], "cooldown":3 } ] },
-            {        "actions":[ { "out":{"resId":"buck", "count":500},  "src": [{"resId":"shell", "count":200}], "cooldown":3 } ] }
+            {        "actions":[ { "out":{"resId":"buck", "count":30},  "src": [{"resId":"shell", "count":10}], "cooldown":5 } ] },
+            {        "actions":[ { "out":{"resId":"buck", "count":80},  "src": [{"resId":"shell", "count":20}], "cooldown":5 } ] },
+            {        "actions":[ { "out":{"resId":"buck", "count":60},  "src": [{"resId":"shell", "count":20}], "cooldown":3 } ] },
+            {        "actions":[ { "out":{"resId":"buck", "count":500},  "src": [{"resId":"shell", "count":200}], "cooldown":5 } ] }
         ]
     },
     "garden":{
-        "price":[5,100,2000,1400],
-        "actions":[ { "out":{"resId":"lamin", "count":1},     "src": [{"resId":"shell", "count":5}], "cooldown":15 } ],
+        "price":[5,100,2000,1400, 3000],
+        "actions":[ { "out":{"resId":"lamin", "count":1},     "src": [{"resId":"shell", "count":5}], "cooldown":7 } ],
         "levels":[
             {},
-            {        "actions":[ { "out":{"resId":"lamin", "count":2},  "src": [{"resId":"shell", "count":10}], "cooldown":15 } ] },
-            {        "actions":[ { "out":{"resId":"lamin", "count":3},  "src": [{"resId":"shell", "count":20}], "cooldown":15 } ] },
-            {        "actions":[ { "out":{"resId":"lamin", "count":3},  "src": [{"resId":"shell", "count":20}], "cooldown":10 } ] }
+            {        "actions":[ { "out":{"resId":"lamin", "count":2},  "src": [{"resId":"shell", "count":10}], "cooldown":7 } ] },
+            {        "actions":[ { "out":{"resId":"lamin", "count":3},  "src": [{"resId":"shell", "count":20}], "cooldown":7 } ] },
+            {        "actions":[ { "out":{"resId":"lamin", "count":5},  "src": [{"resId":"shell", "count":30}], "cooldown":5 } ] },
+            {        "actions":[ { "out":{"resId":"lamin", "count":8},  "src": [{"resId":"shell", "count":40}], "cooldown":5 } ] }
         ]
     },
 
