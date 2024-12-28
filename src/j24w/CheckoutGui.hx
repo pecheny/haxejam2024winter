@@ -1,5 +1,8 @@
 package j24w;
 
+import fu.bootstrap.ButtonScale;
+import j24w.FishyState.AllStats;
+import j24w.FishyData.ItemsDef;
 import j24w.Perks.ItemsProperty;
 import fu.ui.InteractivePanelBuilder;
 import fu.Signal.IntSignal;
@@ -10,6 +13,8 @@ import Main.Lifecycle;
 import al.layouts.PortionLayout;
 import ec.Signal;
 import fancy.domkit.Dkit;
+
+using a2d.ProxyWidgetTransform;
 
 class GameOverView extends BaseDkit {
     public var onDone:Signal<Void->Void> = new Signal();
@@ -46,14 +51,24 @@ class CheckoutView extends BaseDkit {
 
 class ItemCard extends BaseDkit implements DataView<String> {
     static var SRC = <item-card>
-    ${fui.quad(__this__.ph, 0xBC0F7BFF)}
-
-        <label(b().v(pfr, .3).b()) id="lbl"  color={ 0xecb7b7 } text={ "Choose weapon to attack" }  />
+        ${fui.quad(__this__.ph.getInnerPh(), 0xBC0F7BFF)}
+        <label(b().v(pfr, .3).b()) id="lbl"  color={ 0xecb7b7 } />
     </item-card>
 
+    @:once var defs:ItemsDef;
+    @:once var stats:AllStats;
+
     public function initData(descr:String) {
-        // lbl.text = descr.target + " " + descr.type;
-        lbl.text = descr;
+        var def = defs.get(descr);
+        lbl.text = switch def.type {
+            case add:
+                'Make ${def.value}  ${def.target} more per action.';
+            case mp:
+                if (stats.keys.contains(def.target))
+                    'Produce ${Std.int(def.value * 100)}% more ${def.target}s';
+                else
+                    '${def.target} ${Std.int(def.value * 100)}% faster.';
+        }
         trace(descr);
     }
 }
@@ -61,7 +76,7 @@ class ItemCard extends BaseDkit implements DataView<String> {
 class BuyItem extends BaseDkit {
     static var SRC = <buy-item vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC0E0E0E)}
-        <label(b().v(pfr, .3).b()) id="lbl"  color={ 0xecb7b7 } text={ "Choose weapon to attack" }  />
+        <label(b().v(pfr, .3).b()) id="lbl" style={"center"}  text={ "Choose booster:" }  />
         <base(b().v(pfr, 1).b()) id="cardsContainer" layouts={GuiStyles.L_HOR_CARDS}  />
 </buy-item>
 
@@ -73,7 +88,12 @@ class BuyItem extends BaseDkit {
     override function init() {
         super.init();
         input = new InteractivePanelBuilder().withContainer(cardsContainer.c)
-            .withWidget(() -> new ItemCard(b().h(sfr, 0.3).v(sfr, 0.3).b()))
+            .withWidget(() -> {
+                var mc =
+                new ItemCard(b().t(1).h(pfr, 1).v(sfr, 0.3).b());
+                new ButtonScale(mc.entity);
+                mc;
+            })
             .withSignal(onChoice)
             .build();
     }

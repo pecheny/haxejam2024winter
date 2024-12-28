@@ -1,5 +1,13 @@
 package;
 
+import al.layouts.data.LayoutData.FixedSize;
+import al.layouts.PortionLayout;
+import al.layouts.data.LayoutData.FractionSize;
+import al.layouts.WholefillLayout;
+import a2d.ContainerStyler;
+import fancy.domkit.Dkit;
+import fancy.domkit.Dkit.BaseDkit;
+import fu.PropStorage;
 import j24w.CheckoutGui.BuyItem;
 import j24w.FishyData.ItemsDef;
 import j24w.Perks;
@@ -167,6 +175,20 @@ class Main extends BootstrapMain implements Lifecycle {
             .withAlign(horizontal, Backward)
             .build();
     }
+    
+    override function dkitDefaultStyles() {
+		BaseDkit.inject(fui);
+		var e = rootEntity;
+		var props = e.getOrCreate(PropStorage, () -> new CascadeProps<String>(null, "root-props"));
+		props.set(Dkit.TEXT_STYLE, "small-text");
+
+		var distributer = new al.layouts.Padding(new FractionSize(.1), new PortionLayout(Center, new FixedSize(0.1)));
+		var contLayouts = new ContainerStyler();
+		contLayouts.reg(GuiStyles.L_HOR_CARDS, distributer, WholefillLayout.instance);
+		contLayouts.reg(GuiStyles.L_VERT_BUTTONS, WholefillLayout.instance, distributer);
+		e.addComponent(contLayouts);
+	}
+
 }
 
 interface Lifecycle {
