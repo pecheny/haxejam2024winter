@@ -1,11 +1,11 @@
 package j24w;
 
-import bootstrap.DefNode.DefLvlNode;
-import bootstrap.DefNode.Leveled;
-
+import bootstrap.DefNode;
 
 
 class BuildingsDef extends DefLvlNode<BuildingDef> { }
+class ItemsDef extends DefNode<PerkUnit> { }
+
 typedef BuildingDef = {
     >Leveled,
     >Merch,
@@ -34,3 +34,15 @@ enum abstract ResId(String) to String {
     var bivalvia;
     var buck;
 }
+
+typedef PerkUnit = {
+    type:PerkType,
+    target:String,
+    value:Float
+}
+enum abstract PerkType(String) to String {
+    var mp;
+    var add;
+}
+
+

@@ -1,5 +1,6 @@
 package j24w;
 
+import j24w.Perks.ItemsProperty;
 import ec.Entity;
 import stset.Stats;
 import haxe.ds.ReadOnlyArray;
@@ -12,10 +13,12 @@ class FishyState {
     public var stats(default, null):AllStats = new AllStats({});
     public var time:Time = new Time();
     public var month:Int = 0;
+    public var items:ItemsProperty;
 
-    public function new() {
+    public function new(root:Entity) {
         slots = [for (i in 0...9) new Slot(i)];
         stats.initAll({shell: {value: 0, max: 100}});
+        items = ItemsProperty.getOrCreate(root);
     }
 
     public function serialize() {
@@ -23,7 +26,8 @@ class FishyState {
             time: time.t,
             stats: stats.getData(),
             slots: serializeSlots(),
-            month:month
+            items: items.value,
+            month: month
         }
     }
 
@@ -39,6 +43,10 @@ class FishyState {
                 slots[i].value = Empty;
         }
         this.month = state.month ?? 0;
+        if (state.items == null)
+            items.value = [];
+        else
+            items.value = state.items;
     }
 
     function serializeSlots() {

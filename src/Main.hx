@@ -1,5 +1,8 @@
 package;
 
+import j24w.CheckoutGui.BuyItem;
+import j24w.FishyData.ItemsDef;
+import j24w.Perks;
 import j24w.Menu;
 import bootstrap.SimpleRunBinder;
 import j24w.CheckoutGui.CheckoutView;
@@ -34,7 +37,7 @@ class Main extends BootstrapMain implements Lifecycle {
         var pause = rootEntity.addComponent(new Pause());
         var kbinder = new utils.KeyBinder();
 
-        kbinder.addCommand(Keyboard.P, () -> {
+        kbinder.addCommand(Keyboard.SPACE, () -> {
             pause.pause(!pause.paused);
         });
 
@@ -45,12 +48,22 @@ class Main extends BootstrapMain implements Lifecycle {
         kbinder.addCommand(Keyboard.ESCAPE, () -> {
             showMenu();
         });
+        
 
         var entity = rootEntity;
-        var state = entity.addComponent(new FishyState());
+        var state = entity.addComponent(new FishyState(entity));
+        kbinder.addCommand(Keyboard.E, () -> {
+            var p = rootEntity.getComponent(Perks);
+            trace(state.items.value);
+            for (ri in state.stats.keys)
+                trace(ri  + " " + p.getResOutadd(ri)  + " " + p.getResOutmp(ri));
+        });
+
 
         SpeedProp.getOrCreate(entity);
         entity.addComponent(state.time);
+        entity.addComponent(new Perks(entity));
+        entity.addComponent( new ItemsDef("items", openfl.utils.Assets.getLibrary("")));
         entity.addComponentByType(Lifecycle, this);
         entity.addComponent(state.stats);
         var go = entity.addComponent(new GameOverView(Builder.widget()));
@@ -58,10 +71,9 @@ class Main extends BootstrapMain implements Lifecycle {
         var mw = Builder.widget();
         entity.addComponent(new GameView(mw));
         entity.addComponent(new CheckoutView(Builder.widget()));
+        entity.addComponent(new BuyItem(Builder.widget()));
         var bg = entity.addComponent(new BuisinessGame(new Entity("buisiness-run"), Builder.widget()));
         entity.addChild(bg.entity);
-        var co = entity.addComponent(new CheckoutRun(new Entity("checlout-run"), Builder.widget()));
-        entity.addChild(co.entity);
 
         //
         run = new MainGameplayLoop(new Entity("mainloop"), mw);

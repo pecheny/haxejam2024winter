@@ -1,0 +1,67 @@
+{
+    "mp-1": {
+        "type": "mp",
+        "target": "farm",
+        "value": 0.1
+    },
+    "mp-2": {
+        "type": "mp",
+        "target": "kiosk",
+        "value": 0.1
+    },
+    "mp-3": {
+        "type": "mp",
+        "target": "farm",
+        "value": 0.1
+    },
+    "mp-4": {
+        "type": "mp",
+        "target": "garden",
+        "value": 0.1
+    },
+    "mp-5": {
+        "type": "mp",
+        "target": "garden",
+        "value": 0.2
+    },
+    "mp-res-1": {
+        "type": "mp",
+        "target": "buck",
+        "value": 0.1
+    },
+    "mp-res-2": {
+        "type": "mp",
+        "target": "buck",
+        "value": 0.1
+    },
+    "mp-res-3": {
+        "type": "mp",
+        "target": "shell",
+        "value": 0.1
+    },
+    "mp-res-4": {
+        "type": "mp",
+        "target": "shell",
+        "value": 0.1
+    },
+    "add-1": {
+        "type": "add",
+        "target": "shell",
+        "value": 1
+    },
+    "add-2": {
+        "type": "add",
+        "target": "shell",
+        "value": 1
+    },
+    "add-3": {
+        "type": "add",
+        "target": "lamin",
+        "value": 1
+    },
+    "add-4": {
+        "type": "add",
+        "target": "buck",
+        "value": 1
+    }
+}
