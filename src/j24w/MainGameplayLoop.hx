@@ -1,67 +1,77 @@
 package j24w;
 
 import al.Builder;
-import ec.Entity;
-import utils.Random;
-import j24w.FishyData.ItemsDef;
-import j24w.Perks.ItemsProperty;
-import j24w.CheckoutGui.BuyItem;
-import ec.PropertyComponent;
 import bootstrap.GameRunBase;
+import ec.Entity;
+import ec.PropertyComponent;
+import gameapi.CheckedActivity;
 import gameapi.GameRun;
 import haxe.Json;
+import j24w.CheckoutGui.BuyItem;
 import j24w.CheckoutGui.CheckoutView;
 import j24w.CheckoutGui.GameOverView;
+import j24w.FishyData.ItemsDef;
 import j24w.FishyState.AllStats;
 import j24w.Gui.GameView;
+import j24w.Perks.ItemsProperty;
+import utils.Random;
 
 class MainGameplayLoop extends GameRunBase {
     @:once var state:FishyState;
     @:once var time:Time;
     @:once var buisiness:BuisinessGame;
-    @:once var checkout:GameRun;
-    @:once var pickup:GameRun;
+    // @:once var checkout:GameRun;
+    // @:once var pickup:GameRun;
     @:once var gui:GameView;
     @:once var speed:SpeedProp;
-
     var act:GameRun;
+    var checked:Array<CheckedActivity> = [];
 
     public function new(e, v) {
         super(e, v);
-        checkout = new CheckoutRun(new Entity("checlout-run"), Builder.widget());
-        entity.addChild(checkout.entity);
-        pickup = new PickItem(new Entity("pickup-run"), Builder.widget());
-        entity.addChild(pickup.entity);
-    }
-
-    override function init() {
-        super.init();
-        checkout.gameOvered.listen(checkoutDone);
-        pickup.gameOvered.listen(() -> act = buisiness);
+        addChecked(new CheckoutRun(new Entity("checlout-run"), Builder.widget()));
+        addChecked(new PickItem(new Entity("pickup-run"), Builder.widget()));
     }
 
     override function startGame() {
-        checkout.reset();
         act = buisiness;
         buisiness.startGame();
     }
 
-    function checkoutDone() {
-        act = pickup;
-        pickup.startGame();
+    function addChecked(ch:CheckedActivity) {
+        checked.push(ch);
+        ch.gameOvered.listen(checkoutDone);
+        entity.addChild(ch.entity);
     }
 
-    override function update(dt:Float) {
-        var curMon = Math.floor(time.getTime() / 10);
-        var curDay = Math.floor(time.getTime());
-        gui.day.text = "" + curDay;
-        gui.month.text = "" + curMon;
-        if (curMon > state.month) {
-            act = checkout;
-            checkout.startGame();
+    function checkoutDone() {
+        for (ch in checked) {
+            if (ch.shouldActivate()) {
+                act = ch;
+                act.startGame();
+                return;
+            }
         }
-        for (i in 0...speed.value)
-            act.update(dt);
+        act = buisiness;
+    }
+
+    var checkCounter = 0;
+
+    override function update(dt:Float) {
+        if (act == buisiness) {
+            checkCounter++;
+            if (checkCounter > 10) {
+                checkCounter = 0;
+                checkoutDone();
+            }
+            if(act!=buisiness)
+                return;
+            var curDay = Math.floor(time.getTime());
+            gui.day.text = "" + curDay;
+            gui.month.text = "" + state.month;
+            for (i in 0...speed.value)
+                act.update(dt);
+        }
     }
 }
 
@@ -93,7 +103,7 @@ class SpeedProp extends PropertyComponent<Speed> {
     }
 }
 
-class CheckoutRun extends GameRunBase {
+class CheckoutRun extends GameRunBase implements CheckedActivity {
     override function reset() {
         super.reset();
         var d = Date.now();
@@ -137,17 +147,22 @@ class CheckoutRun extends GameRunBase {
         sys.io.File.saveContent('$session-${state.month}.json', Json.stringify(state.serialize(), null, " "));
         #end
     }
+
+    public function shouldActivate():Bool {
+        var curMon = Math.floor(state.time.getTime() / 30);
+        return (curMon > state.month);
+    }
 }
 
-class PickItem extends GameRunBase {
+class PickItem extends GameRunBase implements CheckedActivity {
     @:once var gui:BuyItem;
     @:once var items:ItemsProperty;
     @:once var itemsDef:ItemsDef;
     @:once var perks:Perks;
     @:once var popup:Popup;
+    @:once var state:FishyState;
 
     var choices:Array<String>;
-
 
     override function init() {
         gui.onChoice.listen(clickHandler);
@@ -169,5 +184,9 @@ class PickItem extends GameRunBase {
             return;
         }
         gui.initChoices(choices);
+    }
+
+    public function shouldActivate():Bool {
+        return Math.floor(state.month / 6) > items.value.length;
     }
 }
