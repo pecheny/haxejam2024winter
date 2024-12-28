@@ -13,6 +13,7 @@ class Building extends Component implements Updatable {
     @:once var time:Time;
     @:once var stats:AllStats;
     @:once var defs:BuildingsDef;
+    @:once var perks:Perks;
 
     public function update(dt) {
         for (ch in chains)
@@ -53,7 +54,7 @@ class Building extends Component implements Updatable {
     }
 
     function addAction(r, at) {
-        var chain = new ProductionChain(time, r, stats);
+        var chain = new ProductionChain(time, r, stats, perks, defId);
         chain.activationTime = at;
         chains.push(chain);
     }
@@ -68,15 +69,21 @@ class ProductionChain {
     public var state(get, null):ChainState;
     public var receipe(default, null):Receipe;
     public var activationTime:Float;
+    var perks:Perks;
+    var bdefId:String;
 
     var stats:AllStats;
     var time:Time;
 
-    public function new(time, receipe, stats) {
+    public function new(time, receipe, stats, perks, bdefId) {
         this.time = time;
         this.receipe = receipe;
         this.stats = stats;
+        this.perks = perks;
+        this.bdefId = bdefId;
     }
+    
+    var cooldown:Float;
 
     public function update() {
         switch state {
@@ -86,7 +93,8 @@ class ProductionChain {
             case producing:
                 if (validateState()) {
                     while (activationTime < time.getTime()) {
-                        activationTime += receipe.cooldown;
+                        cooldown = receipe.cooldown * perks.getCdmp(bdefId);
+                        activationTime += cooldown;
                         action();
                     }
                 } else
@@ -99,7 +107,8 @@ class ProductionChain {
     }
 
     function startProduction() {
-        activationTime = time.getTime() + receipe.cooldown;
+        cooldown = receipe.cooldown * perks.getCdmp(bdefId);
+        activationTime = time.getTime() + cooldown;
     }
 
     public function getProgress() {
@@ -114,7 +123,7 @@ class ProductionChain {
         for (s in receipe.src) {
             stats.get(s.resId).value -= s.count;
         }
-        stats.get(receipe.out.resId).value += receipe.out.count;
+        stats.get(receipe.out.resId).value += Math.floor((receipe.out.count + perks.getResOutadd(receipe.out.resId)) * perks.getResOutmp(receipe.out.resId));
     }
 
     function validateState() {
