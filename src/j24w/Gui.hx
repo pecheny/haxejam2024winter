@@ -1,5 +1,6 @@
 package j24w;
 
+import Main.Lifecycle;
 import ec.Component;
 import a2d.ProxyWidgetTransform;
 import al.prop.ScaleComponent;
@@ -29,6 +30,7 @@ import update.Updatable;
 class GameView extends BaseDkit {
     @:once var popup:Popup;
     @:once var speed:SpeedProp;
+    @:once var lc:Lifecycle;
 
     static var SRC = <game-view vl={PortionLayout.instance}>
     <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
@@ -36,11 +38,13 @@ class GameView extends BaseDkit {
         <label(b().h(pfr, 0.1).b()) public id="month"  style={"right"} text={"1"} />
         <label(b().h(pfr, 0.03).b())  style={"fit"} text={"day:"} />
         <label(b().h(pfr, 0.12).b()) public id="day"  style={"right"} text={""} />
-        <label(b().h(pfr, 0.07).b())  style={"fit"} text={"spd:"} />
+        <label(b().h(pfr, 0.10).b())  style={"fit"} text={"spd:"} />
         <button(b().h(pfr, 0.05).b())  id="spd" onClick={onSpd} text={"1"} style={"fit"}/>
-        <base(b().v(pfr, 1).b())>
+        <base(b().v(pfr, 0.65).b())>
             ${new fancy.widgets.StatsDisplay(__this__.ph); }
         </base>
+        <button(b().h(pfr, 0.14).b())  onClick={()->lc.showMenu()} text={"menu"} style={"fit"}/>
+
         </base>
         <slots-panel(b().v(pfr, 6).b()) id="slots" vl={PortionLayout.instance}   />
     </game-view>
@@ -397,7 +401,7 @@ class BuildingDetails extends BaseDkit {
         def.defId = building.defId;
         current.initData(def);
         current.price.text = "purchased";
-        var def = defs.getLvl(building.defId, building.level);
+        var def = defs.getLvl(building.defId, building.level + 1);
         def.defId = building.defId;
         upgraded.initData(def);
     }
