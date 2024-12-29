@@ -7,9 +7,7 @@ import ec.PropertyComponent;
 import gameapi.CheckedActivity;
 import gameapi.GameRun;
 import haxe.Json;
-import j24w.CheckoutGui.BuyItem;
-import j24w.CheckoutGui.CheckoutView;
-import j24w.CheckoutGui.GameOverView;
+import j24w.CheckoutGui;
 import j24w.FishyData.ItemsDef;
 import j24w.FishyState.AllStats;
 import j24w.Gui.GameView;
@@ -31,6 +29,7 @@ class MainGameplayLoop extends GameRunBase {
         super(e, v);
         addChecked(new CheckoutRun(new Entity("checlout-run"), Builder.widget()));
         addChecked(new PickItem(new Entity("pickup-run"), Builder.widget()));
+        addChecked(new Greetings(new Entity("pickup-run"), Builder.widget()));
     }
 
     override function startGame() {
@@ -64,7 +63,7 @@ class MainGameplayLoop extends GameRunBase {
                 checkCounter = 0;
                 checkoutDone();
             }
-            if(act!=buisiness)
+            if (act != buisiness)
                 return;
             var curDay = Math.floor(time.getTime());
             gui.day.text = "" + curDay;
@@ -103,12 +102,65 @@ class SpeedProp extends PropertyComponent<Speed> {
     }
 }
 
+class LLWrapper {
+    static var landlord:Landlord;
+
+    public static function show() {
+        if (landlord == null)
+            landlord = new Landlord();
+        var st = openfl.Lib.current.stage;
+        st.addChild(landlord);
+        landlord.y = st.stageHeight;
+        landlord.x = 200;
+        landlord.width = st.stageWidth / 4;
+        landlord.scaleY = landlord.scaleX;
+    }
+
+    public static function hide() {
+        if (landlord != null) {
+            var st = openfl.Lib.current.stage;
+            st.removeChild(landlord);
+        }
+    }
+}
+
+class Greetings extends GameRunBase implements CheckedActivity {
+    @:once var state:FishyState;
+    @:once var popup:Popup;
+
+    var gui:GreetView;
+
+    public function new(e, v) {
+        super(e, v);
+        gui = new GreetView(v);
+        gui.onDone.listen(go);
+    }
+
+    function go() {
+        popup.close();
+        LLWrapper.hide();
+        gameOvered.dispatch();
+    }
+
+    override function startGame() {
+        popup.switchTo(gui.ph);
+        state.greet = true;
+        LLWrapper.show();
+    }
+
+    public function shouldActivate():Bool {
+        return !state.greet;
+    }
+}
+
 class CheckoutRun extends GameRunBase implements CheckedActivity {
     override function reset() {
         super.reset();
         var d = Date.now();
         session = "" + d.getDay() + "-" + d.getHours() + "-" + d.getMinutes();
     }
+
+    static var landlord:Landlord;
 
     @:once var stats:AllStats;
     @:once var state:FishyState;
@@ -127,6 +179,7 @@ class CheckoutRun extends GameRunBase implements CheckedActivity {
             stats.toll.value = currentToll();
             popup.switchTo(co.ph);
         }
+        LLWrapper.show();
     }
 
     override function init() {
@@ -135,6 +188,7 @@ class CheckoutRun extends GameRunBase implements CheckedActivity {
 
     function coDone() {
         popup.close();
+        LLWrapper.hide();
         gameOvered.dispatch();
     }
 

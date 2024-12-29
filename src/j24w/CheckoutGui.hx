@@ -16,6 +16,25 @@ import fancy.domkit.Dkit;
 
 using a2d.ProxyWidgetTransform;
 
+class GreetView extends BaseDkit {
+    public var onDone:Signal<Void->Void> = new Signal();
+
+    @:once var l:Lifecycle;
+
+    static var SRC = <greet-view vl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0xBC0B0A0A)}
+            <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"Ok yoy can start yout business on my land. But you should pay with shells you grew. The toll will raise and if you cant afford it one day, I'll throw you out immediately. "} />
+            <button(b().v(pfr, 0.1).b()) text={"I'll pay my toll each month as promised."} style={"right"} onClick={done} />
+
+    </greet-view>
+
+    function done() {
+        onDone.dispatch();
+        // l.showMenu();
+    }
+}
+
+
 class GameOverView extends BaseDkit {
     public var onDone:Signal<Void->Void> = new Signal();
 
@@ -24,7 +43,7 @@ class GameOverView extends BaseDkit {
     static var SRC = <game-over-view vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0xBC0B0A0A)}
             <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"game over"} />
-            <button(b().v(pfr, 0.1).b()) text={"ok"} onClick={done} />
+            <button(b().v(pfr, 0.1).b()) text={"ok"} style={"center"} onClick={done} />
 
     </game-over-view>
 
@@ -41,7 +60,7 @@ class CheckoutView extends BaseDkit {
             ${fui.quad(__this__.ph, 0xBC0B0A0A)}
 
             <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"month over, toll payed"} />
-            <button(b().v(pfr, 0.1).b()) text={"ok"} onClick={done} />
+            <button(b().v(pfr, 0.1).b()) text={"ok"} style={"center"} onClick={done} />
     </checkout-view>
 
     function done() {

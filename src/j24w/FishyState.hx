@@ -14,6 +14,7 @@ class FishyState {
     public var time:Time = new Time();
     public var month:Int = 0;
     public var items:ItemsProperty;
+    public var greet:Bool = false;
 
     public function new(root:Entity) {
         slots = [for (i in 0...9) new Slot(i)];
@@ -27,6 +28,7 @@ class FishyState {
             stats: stats.getData(),
             slots: serializeSlots(),
             items: items.value,
+            greet:greet,
             month: month
         }
     }
@@ -42,6 +44,7 @@ class FishyState {
             } else
                 slots[i].value = Empty;
         }
+        greet = state.greet;
         this.month = state.month ?? 0;
         if (state.items == null)
             items.value = [];
