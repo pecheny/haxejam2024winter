@@ -137,6 +137,10 @@ class Main extends BootstrapMain implements Lifecycle {
     }
 
     public function resume() {
+        if(rootEntity.getComponent(FishyState).items.value ==null){
+            newGame();
+            return;
+        }
         rootEntity.getComponent(WidgetSwitcher).switchTo(run.getView());
         rootEntity.getComponent(Pause).pause(false);
     }
@@ -168,6 +172,7 @@ class Main extends BootstrapMain implements Lifecycle {
     public function showMenu():Void {
         rootEntity.getComponent(Pause).pause(true);
         rootEntity.getComponent(Popup).close();
+        LLWrapper.hide();
         rootEntity.getComponent(WidgetSwitcher).switchTo(rootEntity.getComponent(Menu).ph);
     }
 
