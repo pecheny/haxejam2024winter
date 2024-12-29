@@ -59,13 +59,17 @@ class GameView extends BaseDkit {
 }
 
 class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
+    var images:BuildingImages;
+
     static var SRC = <building-card vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC007DC0)}
         <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
             <label(b().v(pfr, 0.3).b()) public id="name"  style={"fit"} text={"Hi1"} />
             <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="lvl"  style={"fit"} text={"Hi1"} />
         </base>
-        <base(b().l().v(pfr, 1).b()) />
+        <base(b().l().v(pfr, 1).b()) >
+            ${images = new BuildingImages(__this__.ph)}
+        </base>
         <base(b().l().v(pfr, 0.5).b()) id="chainsContainer" vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0x16C0FFCB)}
             <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="chains"  style={"fit"} text={"Hi1"} />
@@ -80,6 +84,8 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
 
     public function initData(descr:BuildingDef) {
         name.text = descr.defId;
+        if (descr.defId!=null)
+            images.switchView(descr.defId);
         lvl.text = "" + descr.curLvl;
         var chainsDesc = "";
         for (ch in descr.actions) {
@@ -145,14 +151,16 @@ class ProdChainView extends BaseDkit implements DataView<ProductionChain> {
     var chain:ProductionChain;
 
     static var SRC = <prod-chain-view vl={PortionLayout.instance}>
-            ${fui.quad(__this__.ph, 0xFF00961B)}
-            <label(b().v(sfr, 0.03).b()) id="lbl"  style={"fit"} text={"Hi1"} />
+            // ${fui.quad(__this__.ph, 0xFF00961B)}
+            // <label(b().v(sfr, 0.03).b()) id="lbl"  style={"fit"} text={"Hi1"} />
             <base(b().l().v(sfr, 0.015).b()) hl={PortionLayout.instance}>
-                <label(b().h(pfr,0.3).v(sfr, 0.03).b()) id="cd"  style={"fit"} text={"Hi1"} />
-                <base(b().l().v(sfr, 0.015).b()) >
-                    ${fui.quad(__this__.ph, 0x397A0096)}
-                    ${progress = new ProgressBarWidget(__this__.ph, 0xff8585)}
-                </base>
+                ${progress = new ProgressBarWidget(__this__.ph, 0xff8585)}
+
+                // <label(b().h(pfr,0.3).v(sfr, 0.03).b()) id="cd"  style={"fit"} text={"Hi1"} />
+                // <base(b().l().v(sfr, 0.015).b()) >
+                //     ${fui.quad(__this__.ph, 0x397A0096)}
+                //     ${progress = new ProgressBarWidget(__this__.ph, 0xff8585)}
+                // </base>
             </base>
  </prod-chain-view>
 
@@ -162,13 +170,13 @@ class ProdChainView extends BaseDkit implements DataView<ProductionChain> {
 
     public function initData(descr:ProductionChain) {
         chain = descr;
-        var srcLbl = [
-            for (sp in chain.receipe.src)
-                '${sp.resId} x ${sp.count}'
-        ].join(' + ');
-        var sp = chain.receipe.out;
-        lbl.text = '$srcLbl > ${sp.resId} x ${sp.count}';
-        cd.text = "cd: " + chain.receipe.cooldown;
+        // var srcLbl = [
+        //     for (sp in chain.receipe.src)
+        //         '${sp.resId} x ${sp.count}'
+        // ].join(' + ');
+        // var sp = chain.receipe.out;
+        // lbl.text = '$srcLbl > ${sp.resId} x ${sp.count}';
+        // cd.text = "cd: " + chain.receipe.cooldown;
     }
 }
 
@@ -244,6 +252,7 @@ class BuildingImages {
         trace("switch to ", alias);
         if (active!=null)
             ph.entity.removeChild(active);
+        trace(alias);
         active = images.get(alias).entity;
         ph.entity.addChild(active);
     }
@@ -383,11 +392,13 @@ class BuildingDetails extends BaseDkit {
 
     function slotValChanged() {
         building = slot.building;
-        current.initData(defs.getLvl(building.defId, building.level));
-        current.name.text = building.defId;
+        var def = defs.getLvl(building.defId, building.level);
+        def.defId = building.defId;
+        current.initData(def);
         current.price.text = "purchased";
-        upgraded.initData(defs.getLvl(building.defId, building.level + 1));
-        upgraded.name.text = building.defId;
+        var def = defs.getLvl(building.defId, building.level);
+        def.defId = building.defId;
+        upgraded.initData(def);
     }
 }
 

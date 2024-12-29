@@ -1,5 +1,8 @@
 package;
 
+import openfl.display.Sprite;
+import gl.OflGLNodeAdapter;
+import al.openfl.display.FlashDisplayRoot;
 import openfl.display.Bitmap;
 import al.layouts.data.LayoutData.FixedSize;
 import al.layouts.PortionLayout;
@@ -163,6 +166,9 @@ class Main extends BootstrapMain implements Lifecycle {
         fui.makeClickInput(ph);
         var popup = ph.entity;
         fui.createContainer(popup, Xml.parse(GuiDrawcalls.DRAWCALLS_LAYOUT).firstElement());
+        var spr = new Sprite();
+        popup.getComponent(OflGLNodeAdapter).addChild(spr);
+        popup.addComponent(new FlashDisplayRoot(spr));
         var switcher = new WidgetSwitcher(ph);
         rootEntity.addComponent(new Popup(switcher, fui));
     }
