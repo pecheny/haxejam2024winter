@@ -7,11 +7,11 @@
             {        "actions":[ { "out": {"resId":"shell", "count":3}, "src": [],   "cooldown":5 } ] },
             {        "actions":[ { "out": {"resId":"shell", "count":4}, "src": [],   "cooldown":5 } ] },
             {        "actions":[ { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":20}, "src": [{"resId":"lamin", "count":1}],   "cooldown":5 } , { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":5}],   "cooldown":5 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":200}, "src": [{"resId":"lamin", "count":7}],   "cooldown":5 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":200}, "src": [{"resId":"lamin", "count":5}],   "cooldown":3 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] },
-            {        "actions":[ { "out": {"resId":"shell", "count":300}, "src": [{"resId":"lamin", "count":7}],   "cooldown":3 }, { "out": {"resId":"shell", "count":8}, "src": [],   "cooldown":5 } ] }
+            {        "actions":[ { "out": {"resId":"shell", "count":20}, "src": [{"resId":"lamin", "count":1}],   "cooldown":5 }  ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":100}, "src": [{"resId":"lamin", "count":5}],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":200}, "src": [{"resId":"lamin", "count":7}],   "cooldown":5 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":200}, "src": [{"resId":"lamin", "count":5}],   "cooldown":3 } ] },
+            {        "actions":[ { "out": {"resId":"shell", "count":300}, "src": [{"resId":"lamin", "count":7}],   "cooldown":3 } ] }
         ]
     },
     "kiosk":{
