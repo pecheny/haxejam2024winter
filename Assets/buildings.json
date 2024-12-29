@@ -35,12 +35,5 @@
             {        "actions":[ { "out":{"resId":"lamin", "count":5},  "src": [{"resId":"shell", "count":30}], "cooldown":5 } ] },
             {        "actions":[ { "out":{"resId":"lamin", "count":8},  "src": [{"resId":"shell", "count":40}], "cooldown":5 } ] }
         ]
-    },
-
-    "storage":{
-        "price":[100],
-        "actions":[],
-        "capacity":[{"resId":"shell", "count":100}],
-        "levels":[ {}]
     }
 }
