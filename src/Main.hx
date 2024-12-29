@@ -1,5 +1,9 @@
 package;
 
+import gl.GLNode;
+import al.openfl.StageAspectResizer;
+import openfl.display.StageScaleMode;
+import openfl.display.StageAlign;
 import openfl.display.Sprite;
 import gl.OflGLNodeAdapter;
 import al.openfl.display.FlashDisplayRoot;
@@ -44,9 +48,10 @@ class Main extends BootstrapMain implements Lifecycle {
     var sr:SimpleRunBinder;
     var run:GameRun;
 
+
     public function new() {
         super();
-        openfl.Lib.current.addChildAt(new Bitmap(Assets.getBitmapData("background.jpg")), 0);
+        // openfl.Lib.current.addChildAt(new Bitmap(Assets.getBitmapData("background.jpg")), 0);
         var pause = rootEntity.addComponent(new Pause());
         var kbinder = new utils.KeyBinder();
 
@@ -202,6 +207,42 @@ class Main extends BootstrapMain implements Lifecycle {
 		contLayouts.reg(GuiStyles.L_VERT_BUTTONS, WholefillLayout.instance, distributer);
 		e.addComponent(contLayouts);
 	}
+    
+    override function createFlashDisplay() {
+	}
+
+    
+    override function initFui() {
+        var rw = Builder.ph();
+		rootEntity.addComponentByType(Placeholder2D, rw);
+		fui.configureInput(rootEntity);
+		fui.configureScreen(rootEntity);
+		fui.configureAnimation(rootEntity);
+		rootEntity.addComponent(fui);
+        var filename = "background.jpg"; 
+
+        fui.createContainer(rootEntity, Xml.parse('<drawcall type="image" font="" path="$filename" />;').firstElement());
+
+        var ad = rootEntity.getComponent(OflGLNodeAdapter);
+        rootEntity.removeComponent(OflGLNodeAdapter);
+
+		rootEntity.addComponent(new FlashDisplayRoot(ad));
+
+        var layout =        '<container>
+                <drawcall type="color"/>
+                <drawcall type="text" font="" color="0xffffff"/>
+            </container>';
+
+		fui.createContainer(rootEntity, Xml.parse(layout).firstElement());
+
+        var v = new StageAspectResizer(rw, 2);
+		var switcher = new WidgetSwitcher(rw);
+		rootEntity.addComponent(switcher);
+
+        var ph = Builder.sibling(rw);
+        fui.texturedQuad(ph, filename);
+        fui.lqtr(ph);
+    }
 
 }
 
