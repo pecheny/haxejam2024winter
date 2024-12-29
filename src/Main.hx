@@ -1,5 +1,6 @@
 package;
 
+import openfl.display.Bitmap;
 import al.layouts.data.LayoutData.FixedSize;
 import al.layouts.PortionLayout;
 import al.layouts.data.LayoutData.FractionSize;
@@ -42,6 +43,7 @@ class Main extends BootstrapMain implements Lifecycle {
 
     public function new() {
         super();
+        openfl.Lib.current.addChildAt(new Bitmap(Assets.getBitmapData("background.jpg")), 0);
         var pause = rootEntity.addComponent(new Pause());
         var kbinder = new utils.KeyBinder();
 
@@ -103,7 +105,6 @@ class Main extends BootstrapMain implements Lifecycle {
         rootEntity.getComponent(WidgetSwitcher).switchTo(m.ph);
         run.entity.addComponentByType(GameRun, run);
         showMenu();
-
     }
 
     override function createRunWrapper() {
@@ -184,6 +185,7 @@ class Main extends BootstrapMain implements Lifecycle {
 
 		var distributer = new al.layouts.Padding(new FractionSize(.1), new PortionLayout(Center, new FixedSize(0.1)));
 		var contLayouts = new ContainerStyler();
+		contLayouts.reg("field", distributer, WholefillLayout.instance);
 		contLayouts.reg(GuiStyles.L_HOR_CARDS, distributer, WholefillLayout.instance);
 		contLayouts.reg(GuiStyles.L_VERT_BUTTONS, WholefillLayout.instance, distributer);
 		e.addComponent(contLayouts);

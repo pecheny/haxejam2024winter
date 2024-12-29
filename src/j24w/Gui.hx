@@ -1,5 +1,9 @@
 package j24w;
 
+import ec.Component;
+import a2d.ProxyWidgetTransform;
+import al.prop.ScaleComponent;
+import backends.openfl.SpriteAspectKeeper;
 import j24w.MainGameplayLoop.SpeedProp;
 import a2d.Placeholder2D;
 import update.UpdateBinder;
@@ -40,7 +44,7 @@ class GameView extends BaseDkit {
         </base>
         <slots-panel(b().v(pfr, 6).b()) id="slots" vl={PortionLayout.instance}   />
     </game-view>
-    
+
     function onSpd() {
         var sa = speed.value;
         sa++;
@@ -87,7 +91,7 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
             chainsDesc += '$srcLbl > ${sp.resId} x ${sp.count} / ${ch.cooldown} s <br/>';
         }
         chains.text = chainsDesc;
-        price.text = "" + descr.price[descr.curLvl]  + " bucks";
+        price.text = "" + descr.price[descr.curLvl] + " bucks";
     }
 }
 
@@ -171,12 +175,13 @@ class ProdChainView extends BaseDkit implements DataView<ProductionChain> {
 class BuildingView extends BaseDkit implements Updatable {
     var building:Building;
     var input:a2d.ChildrenPool.DataChildrenPool<ProductionChain, ProdChainView>;
+    var images:BuildingImages;
 
     static var SRC = <building-view vl={PortionLayout.instance}>
-        ${fui.quad(__this__.ph, 0xff960000)}
+        // ${fui.quad(__this__.ph, 0xff960000)}
         <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
-            <label(b().v(pfr, 0.3).b()) id="name"  style={"fit"} text={"Hi1"} />
-            <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="lvl"  style={"fit"} text={"Hi1"} />
+            <label(b().v(pfr, 0.3).b()) id="name" color={0x190035} style={"fit"} text={"Hi1"} />
+            <label(b().h(pfr, 0.5).v(sfr, 0.04).b())  color={0x190035} id="lvl"  style={"fit"} text={"Hi1"} />
         </base>
         <base(b().l().v(pfr, 1).b()) />
         <base(b().l().v(pfr, 0.5).b()) id="chainsContainer" vl={PortionLayout.instance}>
@@ -192,14 +197,16 @@ class BuildingView extends BaseDkit implements Updatable {
 
     override function init() {
         super.init();
+        images = new BuildingImages(ph);
         input = new fu.ui.InteractivePanelBuilder().withInput((_, _) -> {})
             .withContainer(chainsContainer.c)
             .withWidget(() -> new ProdChainView(b().v(sfr, 0.02).b()))
             .build();
         if (building != null)
-            input.initData(building.chains);
+            initData(building);
         entity.addComponentByType(Updatable, this);
         new CtxWatcher(UpdateBinder, entity);
+        
     }
 
     public function initData(building:Building) {
@@ -209,6 +216,36 @@ class BuildingView extends BaseDkit implements Updatable {
         if (!_inited)
             return;
         input.initData(building.chains);
+        images.switchView(building.defId);
+    }
+}
+
+class BuildingImages {
+    var images:Map<String, SpriteAspectKeeper> = new Map();
+    var ph:Placeholder2D;
+    public function new(ph) {
+        this.ph = ph;
+        addView("farm", new Farm());
+        addView("kiosk", new Kiosk());
+        addView("garden", new Garden());
+        addView("storage", new Kiosk());
+    }
+    
+    function addView(alias, mc) {
+        var ak = new SpriteAspectKeeper(Builder.sibling(ph), mc);
+        images.set(alias, ak);
+        ph.entity.removeChild(ak.entity);
+        // ph.entity.addChild(ak.entity);
+    }
+    
+    var active:Entity;
+
+    public function switchView(alias) {
+        trace("switch to ", alias);
+        if (active!=null)
+            ph.entity.removeChild(active);
+        active = images.get(alias).entity;
+        ph.entity.addChild(active);
     }
 }
 
@@ -333,7 +370,7 @@ class BuildingDetails extends BaseDkit {
     }
 
     public function initForSlot(i) {
-        if(slot!=null)
+        if (slot != null)
             slot.onChange.remove(slotValChanged);
         slotId = i;
         if (!_inited)
@@ -343,8 +380,8 @@ class BuildingDetails extends BaseDkit {
         slotValChanged();
         titlebar.lbl.text = building.defId + " details";
     }
-    
-    function slotValChanged(){
+
+    function slotValChanged() {
         building = slot.building;
         current.initData(defs.getLvl(building.defId, building.level));
         current.name.text = building.defId;
@@ -360,18 +397,18 @@ class SlotsPanel extends BaseDkit {
     @:once var state:FishyState;
 
     static var SRC = <slots-panel vl={PortionLayout.instance}>
-    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+    <base(b().v(pfr, .1).h(pfr, .1).b())  layouts={"field"}>
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
     </base>
-    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+    <base(b().v(pfr, .1).h(pfr, .1).b())  layouts={"field"}>
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
     </base>
 
-    <base(b().v(pfr, .1).h(pfr, .1).b())  hl={PortionLayout.instance}>
+    <base(b().v(pfr, .1).h(pfr, .1).b())  layouts={"field"}>
 
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>
         <base(b().v(sfr, .25).h(sfr, .25).b()) > ${slots.push(new SlotView(__this__.ph))} </base>

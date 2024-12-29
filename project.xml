@@ -5,11 +5,14 @@
 
     <window antialiasing="4"/>
     <window background="#303030" fps="60" />
-    <window background="#303030" fps="60" width="1280" height="760" unless="html5"/>
+    <window background="#303030" fps="60" width="720" height="400" unless="html5"/>
     <source path="src"/>
 
     <haxeflag name="--macro" value='domkit.Macros.registerComponentsPath("j24w.Gui.$")'/>
     <haxelib name="openfl"/>
     <haxelib name="jiga"/>
-    <assets path="Assets" include="*" rename=""/>
+    <!-- <library path="assets.swf" id="swf" preload="true" /> -->
+    <haxelib name="swf" />
+    <library path="assets/assets.swf" id="swf" preload="true" generate="true" />
+    <assets path="Assets" rename="" />
 </project>
