@@ -64,6 +64,7 @@ class GameView extends BaseDkit {
 
 class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
     var images:BuildingImages;
+    // @:once var popup:Popup;
 
     static var SRC = <building-card vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC007DC0)}
@@ -74,10 +75,9 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
         <base(b().l().v(pfr, 1).b()) >
             ${images = new BuildingImages(__this__.ph)}
         </base>
-        <base(b().l().v(pfr, 0.5).b()) id="chainsContainer" vl={PortionLayout.instance}>
-            ${fui.quad(__this__.ph, 0x16C0FFCB)}
-            <label(b().h(pfr, 0.5).v(pfr, 0.04).b()) id="chains"  style={"small-text"} text={"Hi1"} />
-
+        <base(b().l().v(pfr, 0.5).b()) id="chainsContainer" layouts={"chains"}>
+            // ${fui.quad(__this__.ph, 0x16C0FFCB)}
+            // <label(b().h(pfr, 0.5).v(pfr, 0.04).b()) id="chains"  style={"small-text"} text={"Hi1"} />
         </base>
 
         <base(b().v(pfr, 0.3).b()) hl={PortionLayout.instance}>
@@ -91,17 +91,30 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
         if (descr.defId!=null)
             images.switchView(descr.defId);
         lvl.text = "" + descr.curLvl;
-        var chainsDesc = "";
-        for (ch in descr.actions) {
-            var srcLbl = [
-                for (sp in ch.src)
-                    '${sp.resId} x ${sp.count}'
-            ].join(' + ');
-            var sp = ch.out;
-            chainsDesc += '$srcLbl > ${sp.resId} x ${sp.count} / ${ch.cooldown} s <br/>';
-        }
-        chains.text = chainsDesc;
+        // var chainsDesc = "";
+        // for (ch in descr.actions) {
+        //     var srcLbl = [
+        //         for (sp in ch.src)
+        //             '${sp.resId} x ${sp.count}'
+        //     ].join(' + ');
+        //     var sp = ch.out;
+        //     chainsDesc += '$srcLbl > ${sp.resId} x ${sp.count} / ${ch.cooldown} s <br/>';
+        // }
+        // chains.text = chainsDesc;
+
+        if (input == null)
+            initInp();
+        input.initData(descr.actions);
         price.text = "" + descr.price[descr.curLvl] + " bucks";
+    }
+    
+    var input:a2d.ChildrenPool.DataChildrenPool<Receipe, ProdChainInfo>;
+     function initInp() {
+        input = new fu.ui.InteractivePanelBuilder().withInput((_, _) -> {})
+        .withContainer(chainsContainer.c)
+        .withWidget(() -> new ProdChainInfo(b().v(pfr, 0.02).b()))
+        .build();
+
     }
 }
 
@@ -148,6 +161,45 @@ class BuyBuilding extends BaseDkit {
     function buy(i) {
         buying.buy(slot, defIds[i]);
         popup.close();
+    }
+}
+
+class ProdChainInfo extends BaseDkit implements DataView<Receipe> {
+
+    static var SRC = <prod-chain-info layouts={"chains"}>
+        <base(b().l().b()) hl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0xFF0A3B77)}
+
+            <label(b().h(pfr,0.3).v(pfr, 0.03).b())  style={"fit"} text={"Produces:"} />
+            <label(b().h(pfr,0.7).v(pfr, 0.03).b()) id="prod"  style={"right"} text={"Hi1"} />
+        </base>
+            
+        <base(b().l().b()) hl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0xFF0A3B77)}
+
+            <label(b().h(pfr,0.3).v(pfr, 0.03).b())  style={"fit"} text={"Consumes:"} />
+            <label(b().h(pfr,0.7).v(pfr, 0.03).b()) id="cons"  style={"right"} text={"Hi1"} />
+        </base>
+
+        <base(b().l().b()) hl={PortionLayout.instance}>
+            ${fui.quad(__this__.ph, 0xFF0A3B77)}
+
+            <label(b().h(pfr,0.3).v(pfr, 0.03).b())  style={"fit"} text={"Cooldown:"} />
+            <label(b().h(pfr,0.7).v(pfr, 0.03).b()) id="cd"  style={"right"} text={"Hi1"} />
+        </base>
+
+ </prod-chain-info>
+
+
+    public function initData(receipe:Receipe) {
+        var srcLbl = [
+            for (sp in receipe.src)
+                '${sp.resId} x ${sp.count}'
+        ].join(' + ');
+        var sp = receipe.out;
+        cons.text = '$srcLbl';
+        prod.text = '${sp.resId} x ${sp.count}';
+        cd.text =  receipe.cooldown  + " days";
     }
 }
 

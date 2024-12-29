@@ -221,6 +221,7 @@ class Main extends BootstrapMain implements Lifecycle {
 
         var distributer = new al.layouts.Padding(new FractionSize(.1), new PortionLayout(Center, new FixedSize(0.1)));
         var contLayouts = new ContainerStyler();
+        contLayouts.reg("chains",  WholefillLayout.instance, new PortionLayout(Center, new FixedSize(0.01)));
         contLayouts.reg("field", distributer, WholefillLayout.instance);
         contLayouts.reg(GuiStyles.L_HOR_CARDS, distributer, WholefillLayout.instance);
         contLayouts.reg(GuiStyles.L_VERT_BUTTONS, WholefillLayout.instance, distributer);
