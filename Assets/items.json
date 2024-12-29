@@ -62,6 +62,6 @@
     "add-4": {
         "type": "add",
         "target": "buck",
-        "value": 1
+        "value": 10
     }
 }
