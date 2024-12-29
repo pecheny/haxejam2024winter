@@ -181,6 +181,12 @@ class Main extends BootstrapMain implements Lifecycle {
             .withAlign(vertical, Center)
             .withAlign(horizontal, Backward)
             .build();
+        ts.newStyle("title")
+        .withSize(sfr, .14) // .withPadding(horizontal, sfr, 0.1)
+        .withAlign(vertical, Center)
+        .withAlign(horizontal, Center)
+        .build();
+
     }
     
     override function dkitDefaultStyles() {

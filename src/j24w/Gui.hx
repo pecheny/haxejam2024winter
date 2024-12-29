@@ -64,21 +64,21 @@ class BuildingCard extends BaseDkit implements DataView<BuildingDef> {
     static var SRC = <building-card vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC007DC0)}
         <base(b().v(pfr, 0.5).b()) hl={PortionLayout.instance}>
-            <label(b().v(pfr, 0.3).b()) public id="name"  style={"fit"} text={"Hi1"} />
-            <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="lvl"  style={"fit"} text={"Hi1"} />
+            <label(b().v(pfr, 0.3).b()) public id="name"  style={"title"} text={"Hi1"} />
+            <label(b().h(pfr, 0.5).v(sfr, 0.12).b()) id="lvl"  style={"fit"} text={"Hi1"} />
         </base>
         <base(b().l().v(pfr, 1).b()) >
             ${images = new BuildingImages(__this__.ph)}
         </base>
         <base(b().l().v(pfr, 0.5).b()) id="chainsContainer" vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0x16C0FFCB)}
-            <label(b().h(pfr, 0.5).v(sfr, 0.04).b()) id="chains"  style={"fit"} text={"Hi1"} />
+            <label(b().h(pfr, 0.5).v(pfr, 0.04).b()) id="chains"  style={"small-text"} text={"Hi1"} />
 
         </base>
 
         <base(b().v(pfr, 0.3).b()) hl={PortionLayout.instance}>
-            <label(b().h(pfr, 0.5).v(sfr, 0.04).b())  style={"fit"} text={"price: "} />
-            <label(b().v(pfr, 0.3).b()) public id="price"  style={"fit"} text={"Hi1"} />
+            <label(b().h(pfr, 0.3).v(sfr, 0.08).b())  style={"fit"} text={"price: "} />
+            <label(b().v(pfr, 0.6).b()) public id="price"  style={"right"} text={"Hi1"} />
         </base>
  </building-card>
 
@@ -114,8 +114,8 @@ class BuyBuilding extends BaseDkit {
 
     static var SRC = <buy-building vl={PortionLayout.instance}>
     ${fui.quad(__this__.ph, 0xBC0B0A0A)}
-    <popup-title(b().v(sfr, .05).b()) />
-    <base(b().v(pfr, 1).b()) id="cardsContainer"  vl={PortionLayout.instance} />
+    <popup-title(b().v(sfr, .10).b()) id="title" />
+    <base(b().v(pfr, 1).b()) id="cardsContainer"  layouts={GuiStyles.L_HOR_CARDS} />
 
     </buy-building>
 
@@ -125,7 +125,7 @@ class BuyBuilding extends BaseDkit {
         super.init();
         onChoice.listen(buy);
         input = new fu.ui.InteractivePanelBuilder().withContainer(cardsContainer.c)
-            .withWidget(() -> new BuildingCard(b().h(sfr, 0.3).v(sfr, 0.3).b()))
+            .withWidget(() -> new BuildingCard(b().h(pfr, 1).v(pfr, 1).b()))
             .withSignal(onChoice)
             .build();
         var defsd = defs.getDyn("");
@@ -138,6 +138,7 @@ class BuyBuilding extends BaseDkit {
             defIds.push(f);
         }
         input.initData(dd);
+        title.lbl.text = "Build";
     }
 
     function buy(i) {
@@ -331,8 +332,8 @@ class PopupTitle extends BaseDkit {
 
     static var SRC = <popup-title hl={PortionLayout.center}>
         ${fui.quad(__this__.ph, 0xFF0087AC)}
-        <label(b().h(pfr, 6).b()) public id="lbl"  style={"small-text"} text={"window title"} />
-        <button(b().h(sfr, 0.05).b())  style={"center"} onClick={()->popup.close()} text={"X"} />
+        <label(b().h(pfr, 6).b()) public id="lbl"  style={"title"} text={"window title"} />
+        <button(b().h(sfr, 0.15).b())  style={"center"} onClick={()->popup.close()} text={"X"} />
     </popup-title>
 }
 
@@ -347,7 +348,7 @@ class BuildingDetails extends BaseDkit {
 
     static var SRC = <building-details vl={PortionLayout.instance}>
         ${fui.quad(__this__.ph, 0xBC0B0A0A)}
-        <popup-title(b().v(sfr, .05).b()) id="titlebar" />
+        <popup-title(b().v(sfr, .10).b()) id="titlebar" />
         <label(b().v(pfr, .1).b()) public id="lbl"  style={"small-text"} text={"upgrades"} />
         <base(b().v(pfr, 1).h(pfr, .1).b())  hl={PortionLayout.instance}>
             <base(b().v(pfr, 1).h(pfr, .1).b())  />
