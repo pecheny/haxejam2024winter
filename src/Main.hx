@@ -41,13 +41,20 @@ import gameapi.GameRunBinder;
 import haxe.Json;
 import openfl.utils.Assets;
 
+#if js
+import storage.BrowserStorage;
+#end
 using a2d.transform.LiquidTransformer;
 using al.Builder;
+#if !js
+typedef BrowserStorage = {}
+#end
 
 class Main extends BootstrapMain implements Lifecycle {
     var sr:SimpleRunBinder;
     var run:GameRun;
 
+    var storage:BrowserStorage;
 
     public function new() {
         super();
@@ -63,25 +70,26 @@ class Main extends BootstrapMain implements Lifecycle {
             ec.DebugInit.initCheck.dispatch();
         });
 
-        kbinder.addCommand(Keyboard.ESCAPE, () -> {
-            showMenu();
-        });
-        
+        kbinder.addCommand(Keyboard.ESCAPE, () -> { showMenu(); });
+        kbinder.addCommand(Keyboard.M, () -> { showMenu(); });
 
         var entity = rootEntity;
+        #if js
+        storage = new BrowserStorage();
+        #end
+        // entity.addComponentByType(Storage, );
         var state = entity.addComponent(new FishyState(entity));
         kbinder.addCommand(Keyboard.E, () -> {
             var p = rootEntity.getComponent(Perks);
             trace(state.items.value);
             for (ri in state.stats.keys)
-                trace(ri  + " " + p.getResOutadd(ri)  + " " + p.getResOutmp(ri));
+                trace(ri + " " + p.getResOutadd(ri) + " " + p.getResOutmp(ri));
         });
-
 
         SpeedProp.getOrCreate(entity);
         entity.addComponent(state.time);
         entity.addComponent(new Perks(entity));
-        entity.addComponent( new ItemsDef("items", openfl.utils.Assets.getLibrary("")));
+        entity.addComponent(new ItemsDef("items", openfl.utils.Assets.getLibrary("")));
         entity.addComponentByType(Lifecycle, this);
         entity.addComponent(state.stats);
         var go = entity.addComponent(new GameOverView(Builder.widget()));
@@ -136,6 +144,8 @@ class Main extends BootstrapMain implements Lifecycle {
     public function saveGame():Void {
         #if sys
         sys.io.File.saveContent("save.json", Json.stringify(rootEntity.getComponent(FishyState).serialize(), null, " "));
+        #else
+        storage.saveValue("save.json", Json.stringify(rootEntity.getComponent(FishyState).serialize(), null, " "));
         #end
     }
 
@@ -144,10 +154,15 @@ class Main extends BootstrapMain implements Lifecycle {
         if (!sys.FileSystem.exists("save.json"))
             return;
         rootEntity.getComponent(FishyState).load(Json.parse(sys.io.File.getContent("save.json")));
+        #else
+        var stdata = storage.getValue("save.json", null);
+        var state = Json.parse(stdata??openfl.utils.Assets.getText("state.json"));
+        rootEntity.getComponent(FishyState).load(state);
+        #end
         @:privateAccess sr.startGame();
         rootEntity.getComponent(Popup).close();
         rootEntity.getComponent(Pause).pause(false);
-        #end
+
     }
 
     public function showMenu():Void {
@@ -187,63 +202,59 @@ class Main extends BootstrapMain implements Lifecycle {
             .withAlign(horizontal, Backward)
             .build();
         ts.newStyle("title")
-        .withSize(sfr, .14) // .withPadding(horizontal, sfr, 0.1)
-        .withAlign(vertical, Center)
-        .withAlign(horizontal, Center)
-        .build();
-
+            .withSize(sfr, .14) // .withPadding(horizontal, sfr, 0.1)
+            .withAlign(vertical, Center)
+            .withAlign(horizontal, Center)
+            .build();
     }
-    
+
     override function dkitDefaultStyles() {
-		BaseDkit.inject(fui);
-		var e = rootEntity;
-		var props = e.getOrCreate(PropStorage, () -> new CascadeProps<String>(null, "root-props"));
-		props.set(Dkit.TEXT_STYLE, "small-text");
+        BaseDkit.inject(fui);
+        var e = rootEntity;
+        var props = e.getOrCreate(PropStorage, () -> new CascadeProps<String>(null, "root-props"));
+        props.set(Dkit.TEXT_STYLE, "small-text");
 
-		var distributer = new al.layouts.Padding(new FractionSize(.1), new PortionLayout(Center, new FixedSize(0.1)));
-		var contLayouts = new ContainerStyler();
-		contLayouts.reg("field", distributer, WholefillLayout.instance);
-		contLayouts.reg(GuiStyles.L_HOR_CARDS, distributer, WholefillLayout.instance);
-		contLayouts.reg(GuiStyles.L_VERT_BUTTONS, WholefillLayout.instance, distributer);
-		e.addComponent(contLayouts);
-	}
-    
-    override function createFlashDisplay() {
-	}
+        var distributer = new al.layouts.Padding(new FractionSize(.1), new PortionLayout(Center, new FixedSize(0.1)));
+        var contLayouts = new ContainerStyler();
+        contLayouts.reg("field", distributer, WholefillLayout.instance);
+        contLayouts.reg(GuiStyles.L_HOR_CARDS, distributer, WholefillLayout.instance);
+        contLayouts.reg(GuiStyles.L_VERT_BUTTONS, WholefillLayout.instance, distributer);
+        e.addComponent(contLayouts);
+    }
 
-    
+    override function createFlashDisplay() {}
+
     override function initFui() {
         var rw = Builder.ph();
-		rootEntity.addComponentByType(Placeholder2D, rw);
-		fui.configureInput(rootEntity);
-		fui.configureScreen(rootEntity);
-		fui.configureAnimation(rootEntity);
-		rootEntity.addComponent(fui);
-        var filename = "background.jpg"; 
+        rootEntity.addComponentByType(Placeholder2D, rw);
+        fui.configureInput(rootEntity);
+        fui.configureScreen(rootEntity);
+        fui.configureAnimation(rootEntity);
+        rootEntity.addComponent(fui);
+        var filename = "background.jpg";
 
         fui.createContainer(rootEntity, Xml.parse('<drawcall type="image" font="" path="$filename" />;').firstElement());
 
         var ad = rootEntity.getComponent(OflGLNodeAdapter);
         rootEntity.removeComponent(OflGLNodeAdapter);
 
-		rootEntity.addComponent(new FlashDisplayRoot(ad));
+        rootEntity.addComponent(new FlashDisplayRoot(ad));
 
-        var layout =        '<container>
+        var layout = '<container>
                 <drawcall type="color"/>
                 <drawcall type="text" font="" color="0xffffff"/>
             </container>';
 
-		fui.createContainer(rootEntity, Xml.parse(layout).firstElement());
+        fui.createContainer(rootEntity, Xml.parse(layout).firstElement());
 
         var v = new StageAspectResizer(rw, 2);
-		var switcher = new WidgetSwitcher(rw);
-		rootEntity.addComponent(switcher);
+        var switcher = new WidgetSwitcher(rw);
+        rootEntity.addComponent(switcher);
 
         var ph = Builder.sibling(rw);
         fui.texturedQuad(ph, filename);
         fui.lqtr(ph);
     }
-
 }
 
 interface Lifecycle {

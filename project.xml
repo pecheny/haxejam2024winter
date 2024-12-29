@@ -11,6 +11,7 @@
     <haxeflag name="--macro" value='domkit.Macros.registerComponentsPath("j24w.Gui.$")'/>
     <haxelib name="openfl"/>
     <haxelib name="jiga"/>
+    <haxelib name="storage"/>
     <!-- <library path="assets.swf" id="swf" preload="true" /> -->
     <haxelib name="swf" />
     <library path="assets/assets.swf" id="swf" preload="true" generate="true" />
