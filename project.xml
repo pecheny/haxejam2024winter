@@ -15,5 +15,5 @@
     <!-- <library path="assets.swf" id="swf" preload="true" /> -->
     <haxelib name="swf" />
     <library path="assets/assets.swf" id="swf" preload="true" generate="true" />
-    <assets path="Assets" rename="" />
+    <assets path="Assets" exclude="*.swf" rename="" />
 </project>
