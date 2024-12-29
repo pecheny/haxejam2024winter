@@ -23,8 +23,9 @@ class GreetView extends BaseDkit {
 
     static var SRC = <greet-view vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0xBC0B0A0A)}
-            <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"Ok yoy can start yout business on my land. But you should pay with shells you grew. The toll will raise and if you cant afford it one day, I'll throw you out immediately. "} />
-            <button(b().v(pfr, 0.1).b()) text={"I'll pay my toll each month as promised."} style={"right"} onClick={done} />
+            <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"We have a deal on starting your business on my land, but it's important to note that you will need to pay rent each month in order for the business to continue operating.
+            I would like to remind you that the rent for your business will be increasing each month. It's important to keep up with these payments in order to continue operating on my property."} />
+            <button(b().v(pfr, 0.1).b()) text={"I promise to pay my bills!    ..."} style={"right"} onClick={done} />
 
     </greet-view>
 
@@ -42,7 +43,7 @@ class GameOverView extends BaseDkit {
 
     static var SRC = <game-over-view vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0xBC0B0A0A)}
-            <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"game over"} />
+            <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"I'm sorry to hear that you didn't pay your rent on time. As a result, I have cancelled our deal and found someone else who is more reliable with their payments."} />
             <button(b().v(pfr, 0.1).b()) text={"ok"} style={"center"} onClick={done} />
 
     </game-over-view>
@@ -55,16 +56,29 @@ class GameOverView extends BaseDkit {
 
 class CheckoutView extends BaseDkit {
     public var onDone:Signal<Void->Void> = new Signal();
+    
+    function text(toll:Int) {
+        return
+        '
+        I must say that it\'s great to hear that you have paid your rent on time. 
+        However, if you delay your payments next month, I will definitely cancel our deal and find someone else who is more reliable with their payments.
+        Please pay $toll shells by the 1st of next month to continue your business.
+        ';
+    }
 
     static var SRC = <checkout-view vl={PortionLayout.instance}>
             ${fui.quad(__this__.ph, 0xBC0B0A0A)}
 
-            <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"} text={"month over, toll payed"} />
+            <label(b().v(pfr, 0.3).b()) id="name"  style={"small-text"}  />
             <button(b().v(pfr, 0.1).b()) text={"ok"} style={"center"} onClick={done} />
     </checkout-view>
 
     function done() {
         onDone.dispatch();
+    }
+    
+    public function setToll(toll:Int) {
+        name.text=text(toll);
     }
 }
 

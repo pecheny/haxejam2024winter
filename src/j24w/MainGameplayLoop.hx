@@ -176,7 +176,9 @@ class CheckoutRun extends GameRunBase implements CheckedActivity {
             popup.switchTo(go.ph);
         } else {
             stats.shell.value -= stats.toll.value;
-            stats.toll.value = currentToll();
+            var toll = currentToll();
+            stats.toll.value = toll;
+            co.setToll(toll);
             popup.switchTo(co.ph);
         }
         LLWrapper.show();
